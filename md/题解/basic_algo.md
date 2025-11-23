@@ -50,14 +50,61 @@
 
 ### 题目描述
 [覆盖墙面](https://www.luogu.com.cn/problem/P1990)
-
+[铺地毯](https://www.luogu.com.cn/problem/P1228)
+[画三角形](https://www.luogu.com.cn/problem/solution/P1498)
 ### 思路概述
 > 从上至下想递推公式, 从下至上写代码
+> 怎么写dfs()?
+```cpp
+void dfs(int depth, int x ....){
+    if (depth == 1){
+        // code
+    }else{
+        // 根据递推公式来做事情
+        // 如果有全局变量改变需要回溯
+    }
+}
 
-
-
+```
+            
+### 示例代码
+- [ ] [P1228铺地毯](../../luogu/P1228)
+![](../../img/1.png)
+- [ ] [P1990覆盖墙面](../../luogu/P1990.cpp)
+- [ ] [P1498](../../luogu/P1498.cpp)
 ![413D04B441BE7F05436E663B9F1A3C69](https://raw.githubusercontent.com/yyds1w3/PicGo-images/main/img/413D04B441BE7F05436E663B9F1A3C69.jpg)
 
+# 贪心
+> 几乎都是O(n)级别, 找局部最优并且对下一个操作有利
+## 区间调度问题
+### 题目描述
+> 一条线段上找有多个线段, 找不重叠的线段最多数目
+
+
+
+### 思路概述
+> 优先找右端点小的区间
+
+
+### 示例代码
+- [x] [P1803](../../luogu/P1803.cpp)
+
+## 霍夫曼树
+
+> 介绍: 给定一群叶节点(带权值), 构建二叉树, 使得根节点的权值最大
+>
+> 构建: 利用最小堆的结构, 每次合并最小节点
+> 时间复杂度: O(nlogn)
+$WPL = \sum_{i=1}^nw_il_i\\
+w_i:叶子节点权值, l_i叶子节点到根节点路径长度$ 
+- [x] [P1090](../../luogu/P1090.cpp)
+- emm突然忘了怎么手写堆了
+
+## 好题
+- [ ] [P3817](../../luogu/P3817.cpp)
+- [ ] [P5019](../../luogu/P5019.cpp)
+> P5019题解
+![](../../img/2.png)
 # 模拟
 
 
