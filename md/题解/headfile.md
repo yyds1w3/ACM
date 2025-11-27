@@ -10,8 +10,6 @@ cout << setprecision(3) << fixed << num << endl; // setprecision是有效数字�
 // 控制场宽
 cout << setw(3) << x; // 占据3个空格, 默认右对齐
 cout << left << setw(3) // 左对齐
-// 加速输入输出
-ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);
 
 // cin卡住
 cin >> a[i] >> b[i];通常会在最后一个卡住的原因是因为 1 3 的3后面没有空格符号， cin不知道3是你输入的还是3.......是你输入的e'm
