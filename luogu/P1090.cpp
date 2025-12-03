@@ -2,25 +2,26 @@
 #include <algorithm>
 #include <queue>
 using namespace std;
-
-int main(){
-    int n;
+typedef long long ll;
+ll ans;
+int n;
+priority_queue<int, vector<int>, greater<int>> pq;
+int main()
+{
     cin >> n;
-    priority_queue<int, vector<int>, greater<int>> pq;
-    int x, y;
-    int ans = 0;
-    for (int i = 0; i < n; ++i){
+    for (int i = 1; i <= n; ++i){
+        int x;
         cin >> x;
         pq.push(x);
     }
-    while (pq.size() >= 2){
-        x = pq.top();
+    while (pq.size() >= 2)
+    {
+        int a = pq.top();
         pq.pop();
-        y = pq.top();
+        int b = pq.top();
         pq.pop();
-        ans += (x + y);
-        pq.push(x + y);
+        pq.push(a + b);
+        ans += a + b;
     }
     cout << ans;
-    
 }

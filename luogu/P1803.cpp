@@ -1,22 +1,21 @@
-#include <iostream>
-#include <algorithm>
+#include<bits/stdc++.h>
 using namespace std;
+const int N = 1e6 + 1;
+int n;
 struct st{
-    int x;
-    int y;
-};
-st a[1000000];
+    int a, b;
+    bool operator<(st & other) {return b < other.b;}
+}sts[N];
 int main(){
-    int n;
     cin >> n;
-    for (int i = 0; i < n;++i){
-        cin >> a[i].x >> a[i].y;
+    for (int i = 1; i <= n; ++i){
+        cin >> sts[i].a >> sts[i].b;
     }
-    sort(a, a+n, [](st q, st w){return q.y <= w.y;});
+    sort(sts+1, sts+1+n);
     int now = 0, ans = 0;
-    for (int i = 0; i < n; ++i){
-        if (a[i].x >= now){
-            now = a[i].y;
+    for (int i = 1; i <= n; ++i){
+        if (sts[i].a >= now){
+            now = sts[i].b;
             ans++;
         }
     }

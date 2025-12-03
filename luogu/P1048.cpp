@@ -1,21 +1,15 @@
-#include <iostream>
-#include <ios>
+#include<bits/stdc++.h>
 using namespace std;
-int t[101], v[101], dp[1001];
+const int N = 1001;
+int t, m, a, b;
+int dp[N];
 int main(){
-    int T, M, ans = 0;
-    cin >> T >> M;
-    for (int i = 1; i <= M; ++i){
-        cin >> t[i] >> v[i];
-    }
- 
-    for (int i = 1; i <= M; ++i){
-        for (int j = T; j >= 1; --j){
-            if (j - t[i] >= 0){
-                dp[j] = max<int>(dp[j-t[i]] + v[i], dp[j]);
-                ans = max<int>(ans, dp[j]);
-            }
+    cin >> t >> m;
+    for (int i = 1; i <= m; ++i){
+        cin >> a >> b;
+        for (int j = t; j >= a; --j){
+                dp[j] = max(dp[j], dp[j - a] + b);
         }
     }
-    cout << ans;
+    cout << dp[t];
 }

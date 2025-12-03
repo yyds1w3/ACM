@@ -57,8 +57,9 @@ std : set,multiset,map,multimap(不过是红黑树)
 > 频繁插入删除选红黑树
 ### Treap树
 
+
 ## 线段树
-> 作用: 区间和()
+> 作用: 区间查询, 区间修改
 - 原数组`a[n]`, 线段树组`d[N]`
 - 线段树满足完全二叉树, $depth = \left \lceil log(n) \right \rceil$
 - 总结点数量: $N = 2^{depth+1} -1$
@@ -70,8 +71,9 @@ std : set,multiset,map,multimap(不过是红黑树)
    10       11
  100 101 110 111
 }
+### 猫树
 
-- [x] [P3372](../../luogu/P3372.cpp) 一个模板题目, 用的懒标记
+- [x] [P3372](../../luogu/P3372.cpp) 一个模板题目, 用的懒标记, 位运算
 
 ## 树状数组(Binary Indexed Tree)
 ```cpp
@@ -92,3 +94,12 @@ lowbit(int x){
 
 ### 边差分
 - [P3398](../../luogu/P3398.cpp)
+
+# 栈
+
+## 单调栈
+- [P5788](../../luogu/P5788.cpp)
+
+
+# st表
+- [P3865](../../luogu/P3865.cpp)
