@@ -103,3 +103,9 @@ lowbit(int x){
 
 # st表
 - [P3865](../../luogu/P3865.cpp)
+
+# 链表
+
+## 静态链表 
+
+- [P1160](../../luogu/P1160.cpp) // 用L[]和R[]和exist[]

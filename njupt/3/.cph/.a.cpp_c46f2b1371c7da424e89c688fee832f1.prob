@@ -1,0 +1,1 @@
+{"name":"Local: a","url":"/home/qingw/OI/njupt/3/a.cpp","tests":[{"id":1764931345271,"input":"5 16\n1 2 3 4 5\n1 2 4\n1 3 5\n3 1 5\n1 1 3\n1 2 4\n3 1 5\n2 2\n3 1 5\n1 3 5\n1 2 4\n3 1 5\n2 4\n3 1 5\n1 1 4\n1 2 3\n3 1 5\n","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/home/qingw/OI/njupt/3/a.cpp","group":"local","local":true}

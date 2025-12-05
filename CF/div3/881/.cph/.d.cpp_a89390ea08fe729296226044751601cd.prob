@@ -1,0 +1,1 @@
+{"name":"Local: d","url":"/home/qingw/OI/CF/div3/881/d.cpp","tests":[{"id":1764920922825,"input":"2\n5\n1 2\n3 4\n5 3\n3 2\n4\n3 4\n5 1\n4 4\n1 3\n3\n1 2\n1 3\n3\n1 1\n2 3\n3 1\n","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/home/qingw/OI/CF/div3/881/d.cpp","group":"local","local":true}

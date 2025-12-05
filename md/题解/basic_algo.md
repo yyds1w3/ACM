@@ -309,3 +309,22 @@ $$
 - Dyck路径(0,0)->(n,n)的路径数, 路径必须在对角线的上方
 - n个节点构建二叉搜索树(BST)或者二叉树
 - [P1044](../../luogu/P1044.cpp)
+## 操纵bit
+### ^
+```cpp
+A ^ A = 0;
+A ^ 0 = A;
+A ^ B ^ C = A ^ C ^ B;
+```
+### &
+```cpp
+A & (A - 1); // 删掉最末尾的1
+```
+
+### __builtin_函数
+```cpp
+__builtin_popcount(n); // 数有多少个1
+__builtin_ctz(n); // 数末尾连续的0(tailing)
+__builtin_clz(n); // 数开头连续的0(leading)
+
+```
