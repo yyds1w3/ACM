@@ -1,0 +1,1 @@
+{"name":"Local: lis","url":"/home/qingw/OI/lib/dp/lis.cpp","tests":[{"id":1765367221696,"input":"6\n1 2 4 1 3 4","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/home/qingw/OI/lib/dp/lis.cpp","group":"local","local":true}
