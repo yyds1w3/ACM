@@ -125,8 +125,19 @@ int main() {
     // ⚠️ 在这里修改参数来造数据 ⚠️
     
     // 示例 1: 生成一个 N <= 10^5 的数组题数据
-    int N = Int(1, 10000); // 先用小数据 (比如10) 调试逻辑，最后改为 100000
-    int B = Int(1, 10000);
-    cout << N << " " << B << "\n";
+    int t = Int(1, 500); // 先用小数据 (比如10) 调试逻辑，最后改为 100000
+    cout << t << '\n';
+    while(t--){
+        int n = Int(1, 100);
+        int k = Int(1, n);
+        int q = Int(1, 100);
+        cout << n << " " <<  k << " " << q << "\n";
+        while (q--){
+            int c = Int(1, 2);
+            int l = Int(1, n);
+            int r = Int(l, n);
+            cout << c << " " << l << " " << r << '\n';
+        }
+    }
     return 0;
 }

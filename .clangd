@@ -1,0 +1,4 @@
+CompileFlags:
+  Add: 
+    - "-DLOCAL"
+    - "-I/home/qingw/ACM/lib" 

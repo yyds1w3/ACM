@@ -1,3 +1,4 @@
+// dp无后效性，最优子结构
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
@@ -5,9 +6,28 @@ typedef long long ll;
 #ifdef LOCAL
 #include "basic/debug.h"
 #else
-#define debug(...) 42
+#define debug(x) 42
 #endif
+const int N = 1e5 + 1;
+ll cnt[N];
+ll dp[N];
 void solve() {
+    int n;
+    cin >> n;
+    ll mx = 0;
+    for (int i = 1; i <= n; ++i){
+        ll x;
+        cin >> x;
+        cnt[x]++;
+        mx = max(mx, x);
+    }
+    dp[1] = cnt[1] * 1;
+    for (int i = 2; i <= mx; ++i){
+        dp[i] = max(dp[i-1], dp[i-2] + cnt[i] * (ll)i);
+    }
+    cout << dp[mx] << '\n';
+    
+    
 }
 
 int main() {

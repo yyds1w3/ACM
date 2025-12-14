@@ -1,3 +1,6 @@
+// 使用BFS求每个港口距离1号港口的最短距离
+//
+//
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;

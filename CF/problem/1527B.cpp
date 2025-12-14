@@ -5,9 +5,19 @@ typedef long long ll;
 #ifdef LOCAL
 #include "basic/debug.h"
 #else
-#define debug(...) 42
+#define debug(x) 42
 #endif
 void solve() {
+    int n; cin >> n;
+    string s; cin >> s;
+    int cnt_zero = 0;
+    for (int i = 0; i < s.size(); ++i){
+        cnt_zero += (s[i] == '0');
+    }
+    if (cnt_zero == 1) cout << "BOB";
+    else if (cnt_zero & 1) cout << "ALICE";
+    else cout << "BOB";
+    cout << endl;
 }
 
 int main() {
@@ -20,7 +30,7 @@ int main() {
     auto _clock_start = chrono::high_resolution_clock::now();
 #endif
     int tt = 1;
-    // cin >> tt;
+    cin >> tt;
     while (tt--) {
         solve();
     }

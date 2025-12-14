@@ -5,9 +5,25 @@ typedef long long ll;
 #ifdef LOCAL
 #include "basic/debug.h"
 #else
-#define debug(...) 42
+#define debug(x) 42
 #endif
+const int N = 2e5+1;
+int pre[N];
 void solve() {
+    string s;
+    cin >> s;
+    for (unsigned int i = 0; i < s.size(); ++i){
+        if (s[i] == s[i+1]){
+            pre[i+1] = pre[i] + 1;
+        }else pre[i+1] = pre[i];
+    }
+    int n;
+    cin >> n;
+    for (int i = 0; i < n; ++i){
+        int l, r;
+        cin >> l >> r;
+        cout << pre[r-1] - pre[l-1] << '\n';
+    }
 }
 
 int main() {

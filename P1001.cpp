@@ -3,9 +3,9 @@ using namespace std;
 typedef long long ll;
 
 #ifdef LOCAL
-#include "basic/debug.h"
+#define debug(x) cerr << #x << " = " << x << endl
 #else
-#define debug(...) 42
+#define debug(x) 42
 #endif
 void solve() {
 }
@@ -19,9 +19,9 @@ int main() {
     }
     auto _clock_start = chrono::high_resolution_clock::now();
 #endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) {
+    int t = 1;
+    // cin >> t;
+    while (t--) {
         solve();
     }
 #ifdef LOCAL

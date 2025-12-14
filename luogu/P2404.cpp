@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 typedef long long ll;
 
@@ -7,7 +8,27 @@ typedef long long ll;
 #else
 #define debug(...) 42
 #endif
+vector<int> path;
+void dfs(int rm, int lv){
+    if (rm == 0){
+        if (path.size() > 1){
+            for (unsigned int i = 0; i < path.size(); ++i){
+                cout << path[i] << (i == path.size() - 1 ? "" : "+"); 
+            }
+        }
+        cout << '\n';
+        return;
+    } 
+    for (int i = lv; i <= rm; ++i){
+        path.push_back(i);
+        dfs(rm-i, i);
+        path.pop_back();
+    }
+}
 void solve() {
+    int n;
+    cin >> n;
+    dfs(n, 1);
 }
 
 int main() {
