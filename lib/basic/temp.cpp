@@ -1,12 +1,16 @@
 #include <bits/stdc++.h>
-using namespace std;
-typedef long long ll;
-
 #ifdef LOCAL
 #include "basic/debug.h"
 #else
 #define debug(...) 42
 #endif
+using namespace std;
+typedef long long ll;
+typedef unsigned long long ull;
+typedef unsigned int uint;
+
+
+
 void solve() {
 }
 
@@ -14,21 +18,12 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 #ifdef LOCAL
-    if (fopen("in.txt", "r")) {
-        freopen("in.txt", "r", stdin);
-    }
-    auto _clock_start = chrono::high_resolution_clock::now();
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
 #endif
     int tt = 1;
     // cin >> tt;
     while (tt--) {
         solve();
     }
-#ifdef LOCAL
-    auto _clock_end = chrono::high_resolution_clock::now();
-    cerr << "Run Time: " 
-         << chrono::duration_cast<chrono::milliseconds>(_clock_end - _clock_start).count() 
-         << " ms" << endl;
-#endif
     return 0;
 }

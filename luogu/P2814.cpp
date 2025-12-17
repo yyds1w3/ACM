@@ -1,4 +1,3 @@
-// 懒惰删除， removed
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
@@ -10,43 +9,35 @@ typedef unsigned int uint;
 #else
 #define debug(...) 42
 #endif
-const int MAXN = 1e5 + 1;
-int n, m, head;
-struct Node{
-    bool removed;
-    int l, r;
-}a[MAXN];
+map<string, string> fa;
+string find(string x){
+    return fa[x] == x ? x : fa[x] = find(fa[x]);
+}
+void merge(string &x, string &y){
+    string rx = fa[x];
+    string ry = fa[y];
+    if (rx != ry) fa[rx] = find(ry);
+}
 void solve() {
-    cin >> n;
-    a[0].r = 1; a[0].l = 0;
-    a[1].r = 0; a[1].l = 0;
-    for (int i = 2; i <= n; ++i){
-        int k, p;
-        cin >> k >> p;
-        if (p == 1){
-            a[i].r = a[k].r;
-            a[i].l = k;
-            if (a[k].r != 0) a[a[k].r].l = i;
-            a[k].r = i;
+    string s;
+    string now_fa = "";
+    while (cin >> s && s != "$"){
+        char type = s[0];
+        string name = s.substr(1);
+        if (type == '#'){
+            now_fa = name;
+            if (fa.find(now_fa) == fa.end()){ // 新的祖先, 未曾在之前存在过
+                fa[now_fa] = now_fa;
+            }
+        }else if (type == '+'){
+            fa[name] = now_fa;
         }else{
-            a[i].l = a[k].l;
-            a[i].r = k;
-            a[a[k].l].r = i;
-            a[k].l = i;
+            cout << name << " " << find(name) << "\n";
         }
     }
-    cin >> m;
-    for (int i = 1; i <= m; ++i){
-        int x;
-        cin >> x;
-        a[x].removed = true;
-    }
-    for (int i = a[0].r; i; i = a[i].r){
-        if (!a[i].removed)
-            cout << i << " ";
-    }
-    cout << "\n";
 }
+
+
 
 int main() {
     ios::sync_with_stdio(false);

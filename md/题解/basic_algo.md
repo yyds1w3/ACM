@@ -56,6 +56,8 @@
 
 ## 递推
 
+## 状态压缩dp
+- [x] [P1433](../../luogu/P1433.cpp)
 ### 题目描述
 [覆盖墙面](https://www.luogu.com.cn/problem/P1990)
 [铺地毯](https://www.luogu.com.cn/problem/P1228)

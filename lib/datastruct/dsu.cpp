@@ -14,27 +14,25 @@ typedef long long ll;
 // ================ start=====================
 struct DSU{
     vector<int> fa, sz;
-    void init(int n){
-        fa.assign(n+1, 0);
-        sz.assign(n+1, 1);
-        for (int i = 1; i <= n; ++i) fa[i] = i;
+    DSU(int n){
+        fa.resize(n + 1);
+        sz.assign(n + 1, 1);
+        iota(fa.begin(), fa.end(), 0);
     }
-
     int find(int x){
-        if (fa[x] == x) return x;
-        return fa[x] = find(fa[x]);
+        return fa[x] == x ? x : fa[x] = find(fa[x]);
     }
 
-    bool merge(int x, int y){ // y认x是老大
-        int rootX = find(x);
-        int rootY = find(y);
-        if (rootX == rootY) return false;
-        fa[rootY] = rootX;
-        sz[rootX] += sz[rootY];
-        return true;
+    void merge(int x, int y){
+        int rx = find(x);
+        int ry = find(y);
+        if (rx != ry){
+            fa[rx] = ry;
+            sz[ry] += sz[rx];
+        }
     }
 
-    bool same(int x, int y){
+    bool ask(int x, int y){
         return find(x) == find(y);
     }
 
@@ -48,14 +46,13 @@ int main(){
     IOS;
     int n, m, x, y, z;
     cin >> n >> m;
-    DSU dsu;
-    dsu.init(n);
+    DSU dsu(n);
     for (int i = 1; i <= m; ++i){
         cin >> z >> x >> y;
         if (z == 1){
             dsu.merge(x, y);
         }else if (z == 2){
-            dsu.same(x, y) ? cout << "Y" : cout << "N";
+            dsu.ask(x, y) ? cout << "Y" : cout << "N";
             cout << '\n';
         }
     }

@@ -1,5 +1,5 @@
-// 懒惰删除， removed
 #include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 typedef long long ll;
 typedef unsigned long long ull;
@@ -11,41 +11,31 @@ typedef unsigned int uint;
 #define debug(...) 42
 #endif
 const int MAXN = 1e5 + 1;
-int n, m, head;
-struct Node{
-    bool removed;
-    int l, r;
-}a[MAXN];
-void solve() {
-    cin >> n;
-    a[0].r = 1; a[0].l = 0;
-    a[1].r = 0; a[1].l = 0;
-    for (int i = 2; i <= n; ++i){
-        int k, p;
-        cin >> k >> p;
-        if (p == 1){
-            a[i].r = a[k].r;
-            a[i].l = k;
-            if (a[k].r != 0) a[a[k].r].l = i;
-            a[k].r = i;
-        }else{
-            a[i].l = a[k].l;
-            a[i].r = k;
-            a[a[k].l].r = i;
-            a[k].l = i;
+vector<int> adj[MAXN];
+int dist[MAXN];
+void dfs(int u, int tag){
+    dist[u] = tag;
+    for (int v : adj[u]){
+        if (dist[v] == 0){
+            dfs(v, tag);
         }
     }
-    cin >> m;
+}
+void solve() {
+    int n, m;
+    cin >> n >> m;
     for (int i = 1; i <= m; ++i){
-        int x;
-        cin >> x;
-        a[x].removed = true;
+        int u, v;
+        cin >> u >> v;
+        adj[v].push_back(u);
     }
-    for (int i = a[0].r; i; i = a[i].r){
-        if (!a[i].removed)
-            cout << i << " ";
+    for (int i = n; i >= 1; --i){
+        if (dist[i] == 0)
+            dfs(i,i);
     }
-    cout << "\n";
+    for (int i = 1; i <= n; ++i){
+        cout << dist[i] << " ";
+    }
 }
 
 int main() {

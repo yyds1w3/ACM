@@ -1,6 +1,6 @@
 /**
  * Ultimate Data Generator for ACM-ICPC
- * Author: Ling
+ * Author: Qingw
  * Standard: C++17
  * Usage: Compile and run. Redirect output to file if needed.
  */

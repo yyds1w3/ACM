@@ -1,4 +1,3 @@
-// 懒惰删除， removed
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
@@ -10,42 +9,30 @@ typedef unsigned int uint;
 #else
 #define debug(...) 42
 #endif
-const int MAXN = 1e5 + 1;
-int n, m, head;
-struct Node{
-    bool removed;
-    int l, r;
-}a[MAXN];
 void solve() {
+    int n;
     cin >> n;
-    a[0].r = 1; a[0].l = 0;
-    a[1].r = 0; a[1].l = 0;
-    for (int i = 2; i <= n; ++i){
-        int k, p;
-        cin >> k >> p;
-        if (p == 1){
-            a[i].r = a[k].r;
-            a[i].l = k;
-            if (a[k].r != 0) a[a[k].r].l = i;
-            a[k].r = i;
-        }else{
-            a[i].l = a[k].l;
-            a[i].r = k;
-            a[a[k].l].r = i;
-            a[k].l = i;
+    map<string, vector<int>> mp;
+    for (int i = 1; i <= n; ++i){
+        int l;
+        string s;
+        cin >> l;
+        for (int j = 1; j <= l; ++j){
+            cin >> s;
+            if (mp[s].empty() || mp[s].back() != i)
+            mp[s].push_back(i);
         }
     }
+    int m;
     cin >> m;
     for (int i = 1; i <= m; ++i){
-        int x;
-        cin >> x;
-        a[x].removed = true;
+        string s;
+        cin >> s;
+        for (int t : mp[s]){
+            cout << t << " ";
+        }
+        cout << "\n";
     }
-    for (int i = a[0].r; i; i = a[i].r){
-        if (!a[i].removed)
-            cout << i << " ";
-    }
-    cout << "\n";
 }
 
 int main() {
