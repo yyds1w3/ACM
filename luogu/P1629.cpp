@@ -1,54 +1,61 @@
-#include <iostream>
-#include <vector>
-#include <queue>
+#include <bits/stdc++.h>
 #include <cstring>
+#include <queue>
+#include <vector>
+#ifdef LOCAL
+#include "basic/debug.h"
+#else
+#define debug(...) 42
+#endif
 using namespace std;
 typedef long long ll;
-const int N = 1e3+5;
-int n, m;
-ll ans;
+typedef unsigned long long ull;
+typedef unsigned int uint;
 struct Edge{
     int v, w;
-    bool operator<(const Edge& other) const {return w > other.w;}
+    bool operator<(const Edge &other) const {return w > other.w;}
 };
-vector<Edge> adj[N];
-vector<Edge> radj[N];
-int dist1[N];
-int dist2[N];
-void init_adj(){
-    int u, v, w;
-    for (int i = 0; i < m; ++i){
+const int MAXN = 1e3 + 1;
+int n, m, u, v, w;
+vector<Edge> adj[MAXN];
+vector<Edge> radj[MAXN];
+int dist[MAXN];
+void dijsktra(int u, vector<Edge> adj[]){
+    priority_queue<Edge> pq;
+    memset(dist, 0x3f, sizeof(dist));
+    dist[u] = 0;
+    pq.push({u, 0});
+    while(!pq.empty()){
+        auto curr = pq.top();
+        pq.pop();
+        if (curr.w > dist[curr.v]) continue;
+        for (auto edge : adj[curr.v]){
+             if (dist[curr.v] + edge.w < dist[edge.v]){
+                dist[edge.v] = dist[u] + edge.w;
+                pq.push({edge.v, edge.w});
+            }
+        }
+    }
+}
+void solve() {
+    cin >> n >> m;
+    for (int i = 1; i <= m; ++i){
         cin >> u >> v >> w;
         adj[u].push_back({v, w});
         radj[v].push_back({u, w});
     }
 }
-void dijkstra(int start, vector<Edge> graph[], int dist[]){
-    priority_queue<Edge> pq;
-    memset(dist, 0x3f, sizeof(int) * N);
-    pq.push({start, 0});
-    dist[start] = 0;
 
-    while (!pq.empty()){
-        Edge curr = pq.top();
-        pq.pop();
-        if (curr.w > dist[curr.v]) continue;
-        for (auto edge : graph[curr.v]){
-            if (dist[curr.v] + edge.w < dist[edge.v]){
-                dist[edge.v] = dist[curr.v] + edge.w;
-                pq.push({edge.v, dist[edge.v]});
-            }
-        }
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+#ifdef LOCAL
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+#endif
+    int tt = 1;
+    // cin >> tt;
+    while (tt--) {
+        solve();
     }
-}
-
-int main(){
-    cin >> n >> m;
-    init_adj();
-    dijkstra(1, adj, dist1);
-    dijkstra(1, radj, dist2);
-    for (int i = 2; i <= n; ++i){
-        ans += dist1[i] + dist2[i];
-    }
-    cout << ans;
+    return 0;
 }

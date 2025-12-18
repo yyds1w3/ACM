@@ -10,6 +10,7 @@ typedef unsigned long long ull;
 typedef unsigned int uint;
 
 void solve() {
+
 }
 
 int main() {
