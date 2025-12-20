@@ -8,29 +8,18 @@ using namespace std;
 typedef long long ll;
 typedef unsigned long long ull;
 typedef unsigned int uint;
-string f(int n, int r){
-    if (n == 0) return "0";
-    string res = "";
-    while (n){
-        int m = n % r;
-        n /= r;
-        if (m < 0){
-            m -= r;
-            n += 1;
-        }
-        if (m >= 10){
-            res += 'A' + m - 10;
-        }
-        else
-            res += m + '0';
-    }
-    reverse(res.begin(), res.end());
-    return res;
-};
+
+ll dp[5001]; // 100*99/2. mx_w
 void solve() {
-    int n, r;
-    cin >> n >> r;
-    cout << n << "=" << f(n, r) << "(base" << r << ")";
+    ll n, k;
+    cin >> n >> k;
+    for (int v = 2; v <= n; ++v){
+        ll w = v * (v - 1) / 2;
+        for (ll j = w; j <= k; ++j){
+            dp[j] = min(dp[j], dp[j - w] + v);
+        }
+    }
+    cout << (dp[k] <= n ? "Yes\n" : "No\n");
 }
 
 int main() {

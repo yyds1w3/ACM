@@ -8,29 +8,16 @@ using namespace std;
 typedef long long ll;
 typedef unsigned long long ull;
 typedef unsigned int uint;
-string f(int n, int r){
-    if (n == 0) return "0";
-    string res = "";
-    while (n){
-        int m = n % r;
-        n /= r;
-        if (m < 0){
-            m -= r;
-            n += 1;
-        }
-        if (m >= 10){
-            res += 'A' + m - 10;
-        }
-        else
-            res += m + '0';
-    }
-    reverse(res.begin(), res.end());
-    return res;
-};
+
+ll x, y, ans;
 void solve() {
-    int n, r;
-    cin >> n >> r;
-    cout << n << "=" << f(n, r) << "(base" << r << ")";
+    cin >> x >> y;
+    while (x && y){
+        swap(x, y);
+        ans += 4*y*(x/y);
+        x%=y;
+    }
+    cout << ans;
 }
 
 int main() {

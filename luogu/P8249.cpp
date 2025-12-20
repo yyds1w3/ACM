@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <bits/stdc++.h>
 #ifdef LOCAL
 #include "basic/debug.h"
@@ -8,29 +9,24 @@ using namespace std;
 typedef long long ll;
 typedef unsigned long long ull;
 typedef unsigned int uint;
-string f(int n, int r){
-    if (n == 0) return "0";
-    string res = "";
-    while (n){
-        int m = n % r;
-        n /= r;
-        if (m < 0){
-            m -= r;
-            n += 1;
-        }
-        if (m >= 10){
-            res += 'A' + m - 10;
-        }
-        else
-            res += m + '0';
-    }
-    reverse(res.begin(), res.end());
-    return res;
-};
+
+map<ll, ll> nums;
 void solve() {
-    int n, r;
-    cin >> n >> r;
-    cout << n << "=" << f(n, r) << "(base" << r << ")";
+    int a, b, q;
+    cin >> a >> b >> q;
+    for (int i = 1; i <= q; ++i){
+        int l, r;
+        cin >> l >> r;
+        ll ans = -1;
+        for (int j = l; j <= r; ++j){
+            if (nums.count(j) == 0){
+                nums[j] = (j % a + j % b);
+            }
+            ans = max(nums[j], ans);
+        }
+        cout << ans << "\n";
+    }
+    
 }
 
 int main() {

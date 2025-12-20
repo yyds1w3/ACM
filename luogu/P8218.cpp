@@ -9,8 +9,21 @@ using ll = long long;
 using ull = unsigned long long;
 using uint = unsigned int;
 using i128 = __int128;
-
+int a[100001];
 void solve() {
+    int n, m;
+    cin >> n;
+    for (int i = 1; i <= n; ++i){
+        cin >> a[i];
+        a[i] += a[i-1];
+    }
+    cin >> m;
+    for (int i = 1; i <= m; ++i){
+        int l, r;
+        cin >> l >> r;
+        cout << a[r] - a[l-1] << endl;
+    }
+
 }
 
 int main() {

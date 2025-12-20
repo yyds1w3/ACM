@@ -1,3 +1,4 @@
+// 正解是sort + unique来去重，因为数组在栈上且是连续内存，比set的堆快（分散）
 #include <bits/stdc++.h>
 #ifdef LOCAL
 #include "basic/debug.h"
@@ -8,29 +9,18 @@ using namespace std;
 typedef long long ll;
 typedef unsigned long long ull;
 typedef unsigned int uint;
-string f(int n, int r){
-    if (n == 0) return "0";
-    string res = "";
-    while (n){
-        int m = n % r;
-        n /= r;
-        if (m < 0){
-            m -= r;
-            n += 1;
-        }
-        if (m >= 10){
-            res += 'A' + m - 10;
-        }
-        else
-            res += m + '0';
-    }
-    reverse(res.begin(), res.end());
-    return res;
-};
+unordered_set<int> row;
+unordered_set<int> col;
 void solve() {
-    int n, r;
-    cin >> n >> r;
-    cout << n << "=" << f(n, r) << "(base" << r << ")";
+    int n, k;
+    cin >> n >> k;
+    for (int i = 0; i < k; ++i){
+        int r, c;
+        cin >> r >> c;
+        row.insert(r);
+        col.insert(c);
+    }
+    cout << n * (row.size() + col.size()) - row.size() * col.size();
 }
 
 int main() {

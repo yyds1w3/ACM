@@ -11,6 +11,7 @@ using uint = unsigned int;
 using i128 = __int128;
 
 void solve() {
+
 }
 
 int main() {

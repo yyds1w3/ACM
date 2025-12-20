@@ -76,7 +76,7 @@ void dfs(int depth, int x ....){
 }
 
 ```
-            
+
 ### 示例代码
 - [ ] [P1228铺地毯](../../luogu/P1228)
 ![](../../img/1.png)
@@ -210,6 +210,43 @@ while(l < r - 1){ // 注意踩坑的地方: 假如起始搜索是[1, 10000000], 
 > 我们可以先把价值输入到原数组，同时求出前缀和数组，之后通过前缀和还原成原数组的区间和
 
 - [ ] [P2280](../../luogu/P2280.cpp)
+   ### 求最大矩形区间和[P1719](https://www.luogu.com.cn/problem/P1719)
+
+$O(n^3)$
+
+- 列举上下边界$O(n^2)$
+
+- 列举上下边界之间的每一行的列的最大字段和$O(n)$
+
+```cpp
+ll a[121][121];
+ll dp[121];
+void solve() {
+    ll n, mx = -0x3f3f3f3f;
+    cin >> n;
+    for (int i = 1; i <= n; ++i){
+        for (int j = 1; j <= n; ++j){
+            cin >> a[i][j];
+            a[i][j] = a[i-1][j] + a[i][j]; // 预处理某一行的前n列的前缀和
+        }
+    }
+    // 列举上下边界
+    for (int i = 1; i <= n; ++i){
+        for (int k = i; k <= n; ++k){
+            memset(dp, 0, sizeof(dp));
+            // 处理每一行的最大字段和（dp[j] = max(Val , dp[j-1] + val)
+            for (int j = 1; j <= n; ++j){
+                ll val = a[k][j] - a[i-1][j];
+                dp[j] = max(val, dp[j-1] + val);
+                mx = max(dp[j], mx);
+            }
+        }
+    }
+    cout << mx;
+}
+
+```
+
 ## 差分
 
 ### 题目描述
@@ -239,9 +276,6 @@ while(l < r - 1){ // 注意踩坑的地方: 假如起始搜索是[1, 10000000], 
 -[ ] [P1923](../../luogu/P1923.cpp)
 
 
-# 欧拉筛, 埃拉托斯特筛
-
-- [ ] [P1217](../../luogu/P1217.cpp)
 
 # 回溯
 
