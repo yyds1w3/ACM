@@ -1,52 +1,45 @@
+#include <algorithm>
 #include <bits/stdc++.h>
 using namespace std;
-#define BIT_METHOD 0
-#define MS_METHOD 1
+#define BIT_METHOD 1
+#define MS_METHOD 0
 #if BIT_METHOD
 const int N = 5e5 + 5;
-int n, m;
-int tree[N];
-int A[N], B[N];
-
+int n;
+int tree[N], a[N], b[N];
 int lowbit(int x){
-    return x & (-x);
+    return x &(-x);
 }
-
 void add(int x, int k){
-    while(x <= n){
+    while (x <= n){
         tree[x] += k;
         x += lowbit(x);
     }
 }
-
 int ask(int x){
     int ans = 0;
-    while(x > 0){
+    while (x){
         ans += tree[x];
         x -= lowbit(x);
     }
     return ans;
 }
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(0);
+int main(){
+    int n;
     cin >> n;
     for (int i = 1; i <= n; ++i){
-        cin >> A[i];
-        B[i] = A[i];
+        cin >> a[i];
+        b[i] = a[i];
     }
-    sort(B + 1, B + 1 + n);
-    int len = unique(B + 1, B + 1 + n) - (B + 1);
-    long long ans = 0; 
-    
-    for (int i = 1; i <= n; ++i) {
-        int rank = lower_bound(B + 1, B + 1 + len, A[i]) - B; 
-        add(rank, 1); // A[i]进入了Tree[2]
-        ans += (i - ask(rank)); // 询问Tree前[1~2]的节点个数和, i - 已经小于等于的就是剩下的大的, 这是截止到i的答案，后面的逆序对要靠i往后移来算
+    sort(b + 1, b + 1 + n);
+    int len = unique(b + 1, b + 1 + n) - b - 1;
+    int ans = 0;
+    for (int i = 1; i <= n; ++i){
+        int id = lower_bound(b + 1, b + 1 + len, a[i]) - b; // 当前的a[i]是第几大的
+        add(id, 1); // tree[id] += 1
+        ans += i - ask(id); // i 总共插入的数量, ask(id) <= id的数量
     }
-    cout << ans << endl;
-    return 0;
+    cout << ans;
 }
 #endif
 #if MS_METHOD

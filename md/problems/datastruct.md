@@ -100,6 +100,8 @@ lowbit(int x){
 
 ## 单调栈
 - [P5788](../../luogu/P5788.cpp)
+- [P4147](https://www.luogu.com.cn/problem/P4147)
+- [P2866](https://www.luogu.com.cn/problem/P2866)
 
 
 # st表

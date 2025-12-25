@@ -28,7 +28,6 @@ struct SegTree {
     }
 
     void push_up(int p) {
-
         tree[p] = (tree[p << 1] + tree[p << 1 | 1]) % MOD;
     }
 

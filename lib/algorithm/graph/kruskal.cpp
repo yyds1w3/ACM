@@ -34,6 +34,7 @@ struct Kruskal{
         return x == fa[x] ? x : fa[x] = find(fa[x]);
     }
     ll solve(){
+        if (n == 1) return 0;
         sort(edges.begin(), edges.end());
         ll total_weight = 0;
         int count = 0;
@@ -46,9 +47,9 @@ struct Kruskal{
                 total_weight += e.w;
                 count++;
             }
+            if (count == n - 1) return total_weight;
         }
-        if (count < n - 1) return -1;
-        return total_weight;
+        return -1;
     }
 };
 
