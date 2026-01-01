@@ -12,145 +12,120 @@ typedef long long ll;
 #define Open(s) freopen(s ".in", "r", stdin); freopen(s ".out", "w", stdout);
 
 // ========================start=============================
-struct SegTree {
-    int n;
-    ll MOD;
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
 
-    vector<ll> tree, lazy_add, lazy_mul;
+#define IOS ios::sync_with_stdio(false); cin.tie(0); cout.tie(0);
 
-    void init(int _n, ll _mod, const vector<ll>& a) {
-        n = _n;
-        MOD = _mod;
-        tree.assign(4 * n + 1, 0);
-        lazy_add.assign(4 * n + 1, 0);
-        lazy_mul.assign(4 * n + 1, 1);
-        build(1, 1, n, a);
+const int MAXN = 1e5 + 5;
+ll tree[4 * MAXN];
+ll lazy_add[4 * MAXN], lazy_mul[4 * MAXN];
+ll a[MAXN];
+ll m; // 模数 P
+
+#define ls (p << 1)
+#define rs (p << 1 | 1)
+
+void push_up(int p) {
+    tree[p] = (tree[ls] + tree[rs]) % m;
+}
+
+void push_down(int p, int l, int r) {
+    if (lazy_mul[p] != 1) {
+        tree[ls] = (tree[ls] * lazy_mul[p]) % m;
+        lazy_mul[ls] = (lazy_mul[ls] * lazy_mul[p]) % m;
+        lazy_add[ls] = (lazy_add[ls] * lazy_mul[p]) % m;
+
+        tree[rs] = (tree[rs] * lazy_mul[p]) % m;
+        lazy_mul[rs] = (lazy_mul[rs] * lazy_mul[p]) % m;
+        lazy_add[rs] = (lazy_add[rs] * lazy_mul[p]) % m;
+
+        lazy_mul[p] = 1;
     }
 
-    void push_up(int p) {
-        tree[p] = (tree[p << 1] + tree[p << 1 | 1]) % MOD;
-    }
-
-    void push_down(int p, int len) {
-        int ls = p << 1;
-        int rs = p << 1 | 1;
-        int len_l = len - (len >> 1);
-        int len_r = len >> 1;
-
-        if (lazy_mul[p] != 1) {
-            tree[ls] = tree[ls] * lazy_mul[p] % MOD;
-            tree[rs] = tree[rs] * lazy_mul[p] % MOD;
-
-            lazy_mul[ls] = lazy_mul[ls] * lazy_mul[p] % MOD;
-            lazy_mul[rs] = lazy_mul[rs] * lazy_mul[p] % MOD;
-
-            lazy_add[ls] = lazy_add[ls] * lazy_mul[p] % MOD;
-            lazy_add[rs] = lazy_add[rs] * lazy_mul[p] % MOD;
-
-            lazy_mul[p] = 1;
-        }
-
-        // 再处理加法
-        if (lazy_add[p] != 0) {
-            tree[ls] = (tree[ls] + lazy_add[p] * len_l) % MOD;
-            tree[rs] = (tree[rs] + lazy_add[p] * len_r) % MOD;
-
-            lazy_add[ls] = (lazy_add[ls] + lazy_add[p]) % MOD;
-            lazy_add[rs] = (lazy_add[rs] + lazy_add[p]) % MOD;
-
-            lazy_add[p] = 0;
-        }
-    }
-
-    void build(int p, int l, int r, const vector<ll>& a) {
-        lazy_add[p] = 0; lazy_mul[p] = 1;
-        if (l == r) {
-            tree[p] = a[l] % MOD;
-            return;
-        }
+    if (lazy_add[p] != 0) {
         int mid = (l + r) >> 1;
-        build(p << 1, l, mid, a);
-        build(p << 1 | 1, mid + 1, r, a);
-        push_up(p);
-    }
+        tree[ls] = (tree[ls] + lazy_add[p] * (mid - l + 1)) % m;
+        lazy_add[ls] = (lazy_add[ls] + lazy_add[p]) % m;
 
-    void update_mul(int p, int l, int r, int ql, int qr, ll k) {
-        if (ql <= l && r <= qr) {
-            tree[p] = tree[p] * k % MOD;
-            lazy_mul[p] = lazy_mul[p] * k % MOD;
-            lazy_add[p] = lazy_add[p] * k % MOD;
-            return;
-        }
-        push_down(p, r - l + 1);
-        int mid = (l + r) >> 1;
-        if (ql <= mid) update_mul(p << 1, l, mid, ql, qr, k);
-        if (qr > mid)  update_mul(p << 1 | 1, mid + 1, r, ql, qr, k);
-        push_up(p);
-    }
+        tree[rs] = (tree[rs] + lazy_add[p] * (r - mid)) % m;
+        lazy_add[rs] = (lazy_add[rs] + lazy_add[p]) % m;
 
-    void mult(int ql, int qr, ll k) {
-        update_mul(1, 1, n, ql, qr, k);
+        lazy_add[p] = 0;
     }
+}
 
-    void update_add(int p, int l, int r, int ql, int qr, ll k) {
-        if (ql <= l && r <= qr) {
-            // 【修正】加括号：(tree + k * len) % MOD
-            tree[p] = (tree[p] + (r - l + 1) * k) % MOD;
-            lazy_add[p] = (lazy_add[p] + k) % MOD;
-            return;
-        }
-        push_down(p, r - l + 1);
-        int mid = (l + r) >> 1;
-        if (ql <= mid) update_add(p << 1, l, mid, ql, qr, k);
-        if (qr > mid)  update_add(p << 1 | 1, mid + 1, r, ql, qr, k);
-        push_up(p);
+void build(int p, int l, int r) {
+    lazy_add[p] = 0;
+    lazy_mul[p] = 1;
+    if (l == r) {
+        tree[p] = a[l] % m;
+        return;
     }
+    int mid = (l + r) >> 1;
+    build(ls, l, mid);
+    build(rs, mid + 1, r);
+    push_up(p);
+}
 
-    void add(int ql, int qr, ll k) {
-        update_add(1, 1, n, ql, qr, k);
+// 区间乘法
+void mult(int p, int l, int r, int nl, int nr, ll val) {
+    if (nl <= l && r <= nr) {
+        tree[p] = (tree[p] * val) % m;
+        lazy_mul[p] = (lazy_mul[p] * val) % m;
+        lazy_add[p] = (lazy_add[p] * val) % m;
+        return;
     }
+    push_down(p, l, r);
+    int mid = (l + r) >> 1;
+    if (nl <= mid) mult(ls, l, mid, nl, nr, val);
+    if (mid < nr) mult(rs, mid + 1, r, nl, nr, val);
+    push_up(p);
+}
+void add(int p, int l, int r, int nl, int nr, ll val) {
+    if (nl <= l && r <= nr) {
+        tree[p] = (tree[p] + val * (r - l + 1)) % m;
+        lazy_add[p] = (lazy_add[p] + val) % m;
+        return;
+    }
+    push_down(p, l, r);
+    int mid = (l + r) >> 1;
+    if (nl <= mid) add(ls, l, mid, nl, nr, val);
+    if (mid < nr) add(rs, mid + 1, r, nl, nr, val);
+    push_up(p);
+}
 
-    ll query_fun(int p, int l, int r, int ql, int qr) {
-        if (ql <= l && r <= qr) {
-            return tree[p];
-        }
-        push_down(p, r - l + 1);
-        int mid = (l + r) >> 1;
-        ll res = 0;
-        if (ql <= mid) res = (res + query_fun(p << 1, l, mid, ql, qr)) % MOD;
-        if (qr > mid)  res = (res + query_fun(p << 1 | 1, mid + 1, r, ql, qr)) % MOD;
-        return res;
+ll query(int p, int l, int r, int nl, int nr) {
+    if (nl <= l && r <= nr) {
+        return tree[p];
     }
-
-    ll query(int ql, int qr) {
-        return query_fun(1, 1, n, ql, qr);
-    }
-};
+    push_down(p, l, r);
+    ll res = 0;
+    int mid = (l + r) >> 1;
+    if (nl <= mid) res = (res + query(ls, l, mid, nl, nr)) % m;
+    if (mid < nr) res = (res + query(rs, mid + 1, r, nl, nr)) % m;
+    return res;
+}
 // =====================End=================================
 int main() {
-    IOS;
-    int n, q, m;
+    int n, q;
     cin >> n >> q >> m;
-    vector<ll> a(n + 1);
     for (int i = 1; i <= n; ++i) {
         cin >> a[i];
     }
-    SegTree seg;
-    seg.init(n, m, a);
+    build(1, 1, n);
     for (int i = 1; i <= q; ++i) {
-        int op, x, y;
-        ll k;
-        cin >> op;
-        if (op == 1) {
-            cin >> x >> y >> k;
-            seg.mult(x, y, k);
-        } else if (op == 2) {
-            cin >> x >> y >> k;
-            seg.add(x, y, k);
-        } else if (op == 3) {
-            cin >> x >> y;
-            cout << seg.query(x, y) << '\n';
+        int opt; cin >> opt;
+        if (opt == 1) {
+            int x, y, k; cin >> x >> y >> k;
+            mult(1, 1, n, x, y, k);
+        }else if (opt == 2) {
+            int x, y, k; cin >> x >> y >> k;
+            add(1, 1, n, x, y, k);
+        }else {
+            int x, y; cin >> x >> y;
+            cout << query(1, 1, n, x, y) << "\n";
         }
     }
-    return 0;
 }
