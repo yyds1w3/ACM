@@ -6,7 +6,7 @@
 - chain(链)
 - star(星星)
 - binary tree(二叉树)
-- full binary tree(完整二叉树) 每个结点的度为 0 / 2
+- xxxxxxxxxx s.substr(pos, len);s.find(sub);stoi(s); stoll(s);to_string(value);​cpp
 - complte binary tree(完全二叉树) 从左到右填 
 - perfect binary tree(完美二叉树) 完美
 #### 遍历

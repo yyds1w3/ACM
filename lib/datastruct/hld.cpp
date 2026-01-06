@@ -47,11 +47,12 @@ void push_up(int k) {
 }
 void push_down(int k) {
     if (tree[k].tag){
+        int l = tree[k].l, r = tree[k].r;
         int mid = (tree[k].r + tree[k].l) >> 1;                                  
         tree[ls].val = (tree[ls].val + tree[k].tag * (mid - l + 1)) % p;
         tree[ls].tag = (tree[ls].tag + tree[k].tag) % p;
         tree[rs].val = (tree[rs].val + tree[k].tag * (r - mid)) % p;
-        tree[rs].tag = (tree[rs].val + tree[k].tag) % p;
+        tree[rs].tag = (tree[rs].tag + tree[k].tag) % p;
         tree[k].tag = 0;
     }
 }
@@ -72,7 +73,50 @@ void update(int k, int nl, int nr, int val) {
         tree[k].tag = (tree[k].tag + (ll)val) % p;
         return;
     }
-
+    push_down(k);
+    int l = tree[k].l, r = tree[k].r, mid = (l + r) >> 1;
+    if (nl <= mid) update(ls, nl, nr, val);
+    if (mid < nr) update(rs, nl, nr, val);
+    push_up(k);
+}
+ll query(int k, int nl, int nr) {
+    if (nl <= tree[k].l && tree[k].r <= nr) {
+        return tree[k].val;
+    }
+    ll res = 0;
+    push_down(k);
+    int l = tree[k].l, r = tree[k].r, mid = (l + r) >> 1;
+    if (nl <= mid) res = (res + query(ls, nl, nr)) % p;
+    if (mid < nr) res = (res + query(rs, nl, nr)) % p;
+    return res;
+}
+// 树剖操作
+void path_add(int x, int y, int z) {
+    z %= p;
+    while (top[x] != top[y]) {
+        if (dep[top[x]] < dep[top[y]]) swap(x, y);
+        update(1, dfn[top[x]], dfn[x], z);
+        x = fa[top[x]]; 
+    }
+    if (dep[x] > dep[y]) swap(x, y);
+    update(1, dfn[x], dfn[y], z);
+}
+ll path_query(int x, int y) {
+    ll res = 0;
+    while (top[x] != top[y]) {
+        if (dep[top[x]] < dep[top[y]]) swap(x, y);
+        res = (res + query(1, dfn[top[x]], dfn[x])) % p;
+        x = fa[top[x]];
+    }
+    if (dep[x] > dep[y]) swap(x, y);
+    res = (res + query(1, dfn[x], dfn[y])) % p;
+    return res;
+}
+void subtree_add(int x, int z) {
+    update(1, dfn[x], dfn[x] + sz[x] - 1, z % p);
+}
+ll subtree_query(int x) {
+    return query(1, dfn[x], dfn[x] + sz[x] - 1);
 }
 // ==========================End=========================================
 

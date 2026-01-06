@@ -13,7 +13,7 @@ inv(3) === 33% === qpow(3, p-2)
 
 - P2926
 
-> 在$O(NlogN)$预处理每个数的倍数
+> xxxxxxxxxx s.substr(pos, len);s.find(sub);stoi(s); stoll(s);to_string(value);​cpp
 
 ```cpp
 	 for (int i = 1; i <= max_v; ++i){
