@@ -14,6 +14,9 @@ const ll LINF = 1e18;
 const int INF = 0x3f3f3f3f;
 
 void solve() {
+    int w; cin >> w;
+    if (!(w & 1) && w >= 4) cout << "YES" << nl;
+    else cout << "NO" << nl;
 }
 
 int main() {

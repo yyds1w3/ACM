@@ -11,21 +11,28 @@ using uint = unsigned int;
 using i128 = __int128;
 const ll LINF = 1e18;
 const int INF = 0x3f3f3f3f;
-const int MAXN = 1e5 + 5;
-ll a[MAXN];
-ll dp[MAXN];
-int mx;
-void solve() {
-    int n; cin >> n;
-    for (int i = 1; i <= n; ++i) {
-        int x; cin >> x;
-        mx = max(x, mx);
-        a[x] += x;
+int get_prime_cnt(int x) {
+    int cnt = 0;
+    for (int i = 2; i * i <= x; ++i) {
+        while (x % i == 0){
+            x/= i;
+            cnt++;
+        }
     }
-    dp[1] = a[1];
-    for (int i = 2; i <= mx; ++i) dp[i] = max(dp[i-1], dp[i-2] + a[i]);
-    cout << dp[mx] << endl;
-
+    if (x > 1) cnt++;
+    return cnt;
+}
+void solve() {
+    int a, b, k; cin >> a >> b >> k;
+    int k_mx = get_prime_cnt(a) + get_prime_cnt(b);
+    if (k == 1) {
+        if (a != b && ((a % b == 0) || (b % a == 0))) {
+            cout << "YES\n";
+        }else cout << "NO\n";
+        return;
+    }
+    if (k <= k_mx) cout << "YES\n";
+    else cout << "NO\n";
 }
 
 int main() {
@@ -35,7 +42,7 @@ int main() {
     if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
 #endif
     int tt = 1;
-    // cin >> tt;
+    cin >> tt;
     while (tt--) {
         solve();
     }

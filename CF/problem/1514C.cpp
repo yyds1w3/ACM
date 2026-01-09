@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <vector>
 #ifdef LOCAL
 #include "basic/debug.h"
 #else
@@ -9,23 +10,22 @@ using ll = long long;
 using ull = unsigned long long;
 using uint = unsigned int;
 using i128 = __int128;
-const ll LINF = 1e18;
-const int INF = 0x3f3f3f3f;
-const int MAXN = 1e5 + 5;
-ll a[MAXN];
-ll dp[MAXN];
-int mx;
+
 void solve() {
     int n; cin >> n;
-    for (int i = 1; i <= n; ++i) {
-        int x; cin >> x;
-        mx = max(x, mx);
-        a[x] += x;
+    vector<int> ans;
+    ll product = 1;
+    for (int i = 1; i < n; ++i) {
+        if (gcd(n, i) == 1) {
+            product = (product * i) % n;
+            ans.push_back(i);
+        }
     }
-    dp[1] = a[1];
-    for (int i = 2; i <= mx; ++i) dp[i] = max(dp[i-1], dp[i-2] + a[i]);
-    cout << dp[mx] << endl;
-
+    cout << (product==1?ans.size(): ans.size()-1) << endl;
+    for (int v : ans) {
+        if (v == product && v != 1) continue;
+        else cout << v << " ";
+    }
 }
 
 int main() {

@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <unordered_map>
 #ifdef LOCAL
 #include "basic/debug.h"
 #else
@@ -9,23 +10,20 @@ using ll = long long;
 using ull = unsigned long long;
 using uint = unsigned int;
 using i128 = __int128;
-const ll LINF = 1e18;
-const int INF = 0x3f3f3f3f;
-const int MAXN = 1e5 + 5;
-ll a[MAXN];
-ll dp[MAXN];
-int mx;
+const int MAXN = 1e5 + 1;
 void solve() {
     int n; cin >> n;
-    for (int i = 1; i <= n; ++i) {
+    unordered_map<int, ll> m;
+    ll ans = 0;
+    // 每一对的(i, j)贡献 i * (n - j + 1)
+    for (int j = 1; j <= n; ++j) {
         int x; cin >> x;
-        mx = max(x, mx);
-        a[x] += x;
+        if (m.count(x)) { // 如果可以形成一对
+            ans += m[x] * (n - j + 1); // m[x] 代表i之和
+        }
+        m[x] += j;
     }
-    dp[1] = a[1];
-    for (int i = 2; i <= mx; ++i) dp[i] = max(dp[i-1], dp[i-2] + a[i]);
-    cout << dp[mx] << endl;
-
+    cout << ans << endl;
 }
 
 int main() {
@@ -35,7 +33,7 @@ int main() {
     if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
 #endif
     int tt = 1;
-    // cin >> tt;
+    cin >> tt;
     while (tt--) {
         solve();
     }

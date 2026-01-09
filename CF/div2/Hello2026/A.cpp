@@ -4,16 +4,20 @@
 #else
 #define debug(...) 42
 #endif
-#define nl "\n"
 using namespace std;
 using ll = long long;
 using ull = unsigned long long;
 using uint = unsigned int;
-using lll = __int128;
-const ll LINF = 1e18;
-const int INF = 0x3f3f3f3f;
-
+using i128 = __int128;
+const int MAXN = 101;
+int a[MAXN];
 void solve() {
+    int n; cin >> n;
+    for (int i = 1; i <= n; ++i) {
+        cin >> a[i];
+    }
+    if (a[1] || a[n]) cout << "Alice\n";
+    else cout << "Bob\n";
 }
 
 int main() {
@@ -23,6 +27,9 @@ int main() {
     if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
 #endif
     int tt = 1;
-    // cin >> tt;
-    while (tt--) solve();
+    cin >> tt;
+    while (tt--) {
+        solve();
+    }
+    return 0;
 }

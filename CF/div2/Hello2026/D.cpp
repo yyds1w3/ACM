@@ -4,14 +4,11 @@
 #else
 #define debug(...) 42
 #endif
-#define nl "\n"
 using namespace std;
 using ll = long long;
 using ull = unsigned long long;
 using uint = unsigned int;
-using lll = __int128;
-const ll LINF = 1e18;
-const int INF = 0x3f3f3f3f;
+using i128 = __int128;
 
 void solve() {
 }
@@ -24,5 +21,8 @@ int main() {
 #endif
     int tt = 1;
     // cin >> tt;
-    while (tt--) solve();
+    while (tt--) {
+        solve();
+    }
+    return 0;
 }

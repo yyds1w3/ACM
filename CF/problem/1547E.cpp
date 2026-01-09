@@ -9,23 +9,25 @@ using ll = long long;
 using ull = unsigned long long;
 using uint = unsigned int;
 using i128 = __int128;
-const ll LINF = 1e18;
-const int INF = 0x3f3f3f3f;
-const int MAXN = 1e5 + 5;
-ll a[MAXN];
-ll dp[MAXN];
-int mx;
+const int MAXN = 3e5 + 1;
+int a[MAXN], t[MAXN];
 void solve() {
-    int n; cin >> n;
-    for (int i = 1; i <= n; ++i) {
-        int x; cin >> x;
-        mx = max(x, mx);
-        a[x] += x;
+    int n, k; cin >> n >> k;
+    for (int i = 1; i <= k; ++i) {
+        cin >> a[i];
     }
-    dp[1] = a[1];
-    for (int i = 2; i <= mx; ++i) dp[i] = max(dp[i-1], dp[i-2] + a[i]);
-    cout << dp[mx] << endl;
-
+    memset(t, 0x3f, sizeof(t));
+    for (int i = 1; i <= k; ++i) {
+        cin >> t[a[i]];
+    }
+    for (int i = 1; i <= n; ++i) {
+        t[i] = min(t[i], t[i-1] + 1);
+    }
+    for (int i = n-1; i >= 1; --i) {
+        t[i] = min(t[i], t[i+1] + 1);
+    }
+    for (int i = 1; i <= n; ++i) cout << t[i] << " ";
+    cout << "\n";
 }
 
 int main() {
@@ -35,7 +37,7 @@ int main() {
     if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
 #endif
     int tt = 1;
-    // cin >> tt;
+    cin >> tt;
     while (tt--) {
         solve();
     }

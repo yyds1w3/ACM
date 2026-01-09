@@ -4,16 +4,23 @@
 #else
 #define debug(...) 42
 #endif
-#define nl "\n"
 using namespace std;
 using ll = long long;
 using ull = unsigned long long;
 using uint = unsigned int;
-using lll = __int128;
-const ll LINF = 1e18;
-const int INF = 0x3f3f3f3f;
+using i128 = __int128;
 
 void solve() {
+    int n, k; cin >> n >> k;
+    string s; cin >> s;
+    int pre = 1;
+    for (int i = 1; i < n; ++i) {
+        if (s[i] < s[i % pre]) pre = i + 1;
+        else if (s[i] > s[i % pre]) break;
+    }
+    string ans;
+    for (int i = 0; i < k; ++i) ans += s[i % pre];
+    cout << ans;
 }
 
 int main() {
@@ -24,5 +31,8 @@ int main() {
 #endif
     int tt = 1;
     // cin >> tt;
-    while (tt--) solve();
+    while (tt--) {
+        solve();
+    }
+    return 0;
 }

@@ -9,22 +9,24 @@ using ll = long long;
 using ull = unsigned long long;
 using uint = unsigned int;
 using i128 = __int128;
-const ll LINF = 1e18;
-const int INF = 0x3f3f3f3f;
-const int MAXN = 1e5 + 5;
-ll a[MAXN];
-ll dp[MAXN];
-int mx;
+const int MAXN = 2e5 + 1;
+int a[MAXN];
 void solve() {
-    int n; cin >> n;
+    int n, k; cin >> n >> k;
     for (int i = 1; i <= n; ++i) {
-        int x; cin >> x;
-        mx = max(x, mx);
-        a[x] += x;
+        cin >> a[i];
     }
-    dp[1] = a[1];
-    for (int i = 2; i <= mx; ++i) dp[i] = max(dp[i-1], dp[i-2] + a[i]);
-    cout << dp[mx] << endl;
+    sort(a + 1, a + 1 + n);
+    int e = unique(a + 1, a + 1 + n) - a - 1;
+    int ans = e;
+    for (int i = 1; i <= e; ++i) {
+        if (i - 1 != a[i]) {
+            ans = i - 1;
+            break;
+        }
+    }
+    ans = min(k - 1, ans);
+    cout << ans << endl;
 
 }
 
@@ -35,7 +37,7 @@ int main() {
     if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
 #endif
     int tt = 1;
-    // cin >> tt;
+    cin >> tt;
     while (tt--) {
         solve();
     }

@@ -11,21 +11,20 @@ using uint = unsigned int;
 using i128 = __int128;
 const ll LINF = 1e18;
 const int INF = 0x3f3f3f3f;
-const int MAXN = 1e5 + 5;
-ll a[MAXN];
-ll dp[MAXN];
-int mx;
+int x = INF, y = INF;
 void solve() {
-    int n; cin >> n;
-    for (int i = 1; i <= n; ++i) {
-        int x; cin >> x;
-        mx = max(x, mx);
-        a[x] += x;
+    string s; cin >> s;
+    int sz = s.size();
+    for (int i = 0; i < sz; ++i) {
+        if (s[i] == 'A' && s[i + 1] == 'B') {
+            x = min(x, i);
+            if (i - y > 1) {cout << "YES\n"; return;}
+        }else if (s[i] == 'B' && s[i + 1] == 'A') {
+            y = min(y, i);
+            if (i - x > 1) {cout << "YES\n"; return;}
+        }
     }
-    dp[1] = a[1];
-    for (int i = 2; i <= mx; ++i) dp[i] = max(dp[i-1], dp[i-2] + a[i]);
-    cout << dp[mx] << endl;
-
+    cout << "NO\n";
 }
 
 int main() {

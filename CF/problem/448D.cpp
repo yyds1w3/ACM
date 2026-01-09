@@ -11,21 +11,28 @@ using uint = unsigned int;
 using i128 = __int128;
 const ll LINF = 1e18;
 const int INF = 0x3f3f3f3f;
-const int MAXN = 1e5 + 5;
-ll a[MAXN];
-ll dp[MAXN];
-int mx;
-void solve() {
-    int n; cin >> n;
+ll n, m, k;
+bool check(ll x) {
+    ll sum = 0;
     for (int i = 1; i <= n; ++i) {
-        int x; cin >> x;
-        mx = max(x, mx);
-        a[x] += x;
+        if (x < i) break;
+        sum += min(x / i, m);
     }
-    dp[1] = a[1];
-    for (int i = 2; i <= mx; ++i) dp[i] = max(dp[i-1], dp[i-2] + a[i]);
-    cout << dp[mx] << endl;
-
+    if (sum < k) return true;
+    return false;
+}
+void solve() {
+    cin >> n >> m >> k;
+    ll l = 0, r = n * m;
+    while (l < r) {
+        ll mid = (l + r) >> 1;
+        if (check(mid)) { // < k
+            l = mid + 1;
+        }else {
+            r = mid;
+        }
+    }
+    cout << l << endl;
 }
 
 int main() {

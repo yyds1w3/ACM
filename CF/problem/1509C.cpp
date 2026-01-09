@@ -11,21 +11,20 @@ using uint = unsigned int;
 using i128 = __int128;
 const ll LINF = 1e18;
 const int INF = 0x3f3f3f3f;
-const int MAXN = 1e5 + 5;
+const int MAXN = 2005;
+ll dp[MAXN][MAXN];
 ll a[MAXN];
-ll dp[MAXN];
-int mx;
 void solve() {
     int n; cin >> n;
-    for (int i = 1; i <= n; ++i) {
-        int x; cin >> x;
-        mx = max(x, mx);
-        a[x] += x;
+    for (int i = 1; i <= n; ++i) cin >> a[i];
+    sort(a + 1, a + 1 + n);
+    for (int len = 2; len <= n; ++len) {
+        for (int l = 1; l <= n - len + 1; ++l) {
+            int r = l + len - 1;
+            dp[l][r] = a[r]-a[l]+min(dp[l+1][r], dp[l][r-1]);
+        }
     }
-    dp[1] = a[1];
-    for (int i = 2; i <= mx; ++i) dp[i] = max(dp[i-1], dp[i-2] + a[i]);
-    cout << dp[mx] << endl;
-
+    cout << dp[1][n] << endl;
 }
 
 int main() {

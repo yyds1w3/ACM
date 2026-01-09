@@ -4,16 +4,22 @@
 #else
 #define debug(...) 42
 #endif
-#define nl "\n"
 using namespace std;
 using ll = long long;
 using ull = unsigned long long;
 using uint = unsigned int;
-using lll = __int128;
-const ll LINF = 1e18;
-const int INF = 0x3f3f3f3f;
-
+using i128 = __int128;
+const int MOD = 1e9 + 7;
 void solve() {
+    ll n; cin >> n;
+    ll ans = n % MOD, Lcm = 1;
+    for (ll x = 1;; x++) {
+        ll g = gcd(Lcm, x);
+        if (Lcm > n / (x / g)) break;
+        Lcm = Lcm * (x / g);
+        ans = (ans + n / Lcm) % MOD;
+    }
+    cout << ans << "\n";
 }
 
 int main() {
@@ -23,6 +29,9 @@ int main() {
     if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
 #endif
     int tt = 1;
-    // cin >> tt;
-    while (tt--) solve();
+    cin >> tt;
+    while (tt--) {
+        solve();
+    }
+    return 0;
 }

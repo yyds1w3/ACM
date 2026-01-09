@@ -11,22 +11,31 @@ using uint = unsigned int;
 using i128 = __int128;
 const ll LINF = 1e18;
 const int INF = 0x3f3f3f3f;
-const int MAXN = 1e5 + 5;
+const int MAXN = 5e5 + 1;
 ll a[MAXN];
-ll dp[MAXN];
-int mx;
+ll cnt[MAXN];
+ll sum;
+ll ans;
 void solve() {
     int n; cin >> n;
+    for (int i = 1; i <= n; ++i) {cin >> a[i]; sum += a[i];}
+    if (sum % 3 != 0) {cout << 0 << endl; return;}
+    sum /= 3;
+    ll now = 0;
     for (int i = 1; i <= n; ++i) {
-        int x; cin >> x;
-        mx = max(x, mx);
-        a[x] += x;
+        now += a[i];
+        if (now == sum) cnt[i] = 1;
     }
-    dp[1] = a[1];
-    for (int i = 2; i <= mx; ++i) dp[i] = max(dp[i-1], dp[i-2] + a[i]);
-    cout << dp[mx] << endl;
-
+    for (int i = 2; i <= n; ++i) cnt[i] += cnt[i-1];
+    now = 0;
+    for (int i = n; i >= 3; --i) {
+        now += a[i];
+        if (now == sum) ans += cnt[i-2];
+    }
+    cout << ans << endl;
 }
+
+
 
 int main() {
     ios::sync_with_stdio(false);
