@@ -70,8 +70,8 @@ void build(int p, int l, int r) {
 }
 
 // 区间乘法
-void mult(int p, int l, int r, int nl, int nr, ll val) {
-    if (nl <= l && r <= nr) {
+void mult(int p, int l, int r, int ql, int qr, ll val) {
+    if (ql <= l && r <= qr) {
         tree[p] = (tree[p] * val) % m;
         lazy_mul[p] = (lazy_mul[p] * val) % m;
         lazy_add[p] = (lazy_add[p] * val) % m;
@@ -79,32 +79,32 @@ void mult(int p, int l, int r, int nl, int nr, ll val) {
     }
     push_down(p, l, r);
     int mid = (l + r) >> 1;
-    if (nl <= mid) mult(ls, l, mid, nl, nr, val);
-    if (mid < nr) mult(rs, mid + 1, r, nl, nr, val);
+    if (ql <= mid) mult(ls, l, mid, ql, qr, val);
+    if (mid < qr) mult(rs, mid + 1, r, ql, qr, val);
     push_up(p);
 }
-void add(int p, int l, int r, int nl, int nr, ll val) {
-    if (nl <= l && r <= nr) {
+void add(int p, int l, int r, int ql, int qr, ll val) {
+    if (ql <= l && r <= qr) {
         tree[p] = (tree[p] + val * (r - l + 1)) % m;
         lazy_add[p] = (lazy_add[p] + val) % m;
         return;
     }
     push_down(p, l, r);
     int mid = (l + r) >> 1;
-    if (nl <= mid) add(ls, l, mid, nl, nr, val);
-    if (mid < nr) add(rs, mid + 1, r, nl, nr, val);
+    if (ql <= mid) add(ls, l, mid, ql, qr, val);
+    if (mid < qr) add(rs, mid + 1, r, ql, qr, val);
     push_up(p);
 }
 
-ll query(int p, int l, int r, int nl, int nr) {
-    if (nl <= l && r <= nr) {
+ll query(int p, int l, int r, int ql, int qr) {
+    if (ql <= l && r <= qr) {
         return tree[p];
     }
     push_down(p, l, r);
     ll res = 0;
     int mid = (l + r) >> 1;
-    if (nl <= mid) res = (res + query(ls, l, mid, nl, nr)) % m;
-    if (mid < nr) res = (res + query(rs, mid + 1, r, nl, nr)) % m;
+    if (ql <= mid) res = (res + query(ls, l, mid, ql, qr)) % m;
+    if (mid < qr) res = (res + query(rs, mid + 1, r, ql, qr)) % m;
     return res;
 }
 // =====================End=================================

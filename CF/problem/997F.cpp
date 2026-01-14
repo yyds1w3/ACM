@@ -5,24 +5,38 @@
 #define debug(...) 42
 #endif
 #define nl "\n"
-#define popcount(x) __builtin_popcount(x)
-#define popcountll(x) __builtin_popcountll(x)
-#define ctz(x) __builtin_ctz(x)
-#define ctzll(x) __builtin_ctzll(x)
-#define clz(x) __builtin_clz(x)
-#define clzll(x) __builtin_clzll(x)
 using namespace std;
 using ll = long long;
 using ull = unsigned long long;
 using uint = unsigned int;
 using lll = __int128;
-int lg2(int x) {return 31 - clz(x);}
-int lg2(ll x) {return 63 - clzll(x);}
 const ll LINF = 1e18;
 const int INF = 0x3f3f3f3f;
-const int MAXN = 1e5 + 5;
-
+const int MAXN = 2e5 + 1;
+int a[MAXN];
 void solve() {
+    int n; cin >> n;
+    map<int, int> m;
+    int ans = 0;
+    int lst = 0;
+    for (int i = 1; i<= n; ++i) {
+        cin >> a[i];
+        m[a[i]] = m[a[i]-1] + 1;
+        if (ans < m[a[i]]) {
+            ans = m[a[i]];
+            lst = a[i];
+        }
+    }
+    cout << ans << nl;
+    int val = lst - ans + 1;
+    for (int i = 1; i <= n; ++i) {
+        if (a[i] == val) {
+            cout << i << " ";
+            val++;
+        }
+    }
+    cout << nl;
+
 }
 
 int main() {

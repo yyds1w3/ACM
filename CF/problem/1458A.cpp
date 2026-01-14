@@ -5,24 +5,31 @@
 #define debug(...) 42
 #endif
 #define nl "\n"
-#define popcount(x) __builtin_popcount(x)
-#define popcountll(x) __builtin_popcountll(x)
-#define ctz(x) __builtin_ctz(x)
-#define ctzll(x) __builtin_ctzll(x)
-#define clz(x) __builtin_clz(x)
-#define clzll(x) __builtin_clzll(x)
 using namespace std;
 using ll = long long;
 using ull = unsigned long long;
 using uint = unsigned int;
 using lll = __int128;
-int lg2(int x) {return 31 - clz(x);}
-int lg2(ll x) {return 63 - clzll(x);}
 const ll LINF = 1e18;
 const int INF = 0x3f3f3f3f;
-const int MAXN = 1e5 + 5;
-
+const int MAXN = 2e5 + 5;
+ll a[MAXN];
 void solve() {
+    int n, m; cin >> n >> m;
+    ll b;
+    cin >> a[1];
+    for (int i = 2; i <= n; ++i){
+        cin >> a[i];
+        a[i] -= a[1];
+    }
+    ll ans = 0;
+    for (int i = 2; i <= n; ++i) {
+        ans = gcd(ans, a[i]);
+    }
+    for (int j = 1; j <= m; ++j) {
+        cin >> b;
+        cout << gcd(ans, a[1]+b) << " ";
+    }
 }
 
 int main() {
