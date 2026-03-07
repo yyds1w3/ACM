@@ -1,74 +1,68 @@
-#include <iostream> // 改成 iostream 更通用
+#include <bits/stdc++.h>
 #include <vector>
-#include <algorithm> // for swap
+#ifdef LOCAL
+#include "basic/debug.h"
+#else
+#define debug(...) 42
+#endif
+using ll = long long;
+using lll = __int128;
 using namespace std;
-
-const int N = 500005; // 题目范围 5e5
-vector<int> adj[N];
-int depth[N]; // 根节点depth == 1
-int up[N][25]; // up[u][i]代表u节点向上跳2 ^ i之后的节点
-int n, m, s, x, y, a, b;
-
-void dfs(int u, int fa){
-    // 初始化
-    depth[u] = depth[fa] + 1;
-    up[u][0] = fa;
-    // 开始修到根节点的梯子
-    for (int i = 1; i <= 20; ++i){
-        // log级别修梯子：先跳 2^(i-1)，再跳 2^(i-1)
-        up[u][i] = up[ up[u][i-1] ][i-1]; 
-    }
-    // 开始给子节点修梯子
-    for (int v : adj[u]){
-        if (v != fa) dfs(v, u);
+#define nl "\n"
+#define rep(i,s,e) for (ll i = s; i <= (e); ++i)
+#define per(i,e,s) for (ll i = e; i >= (s); --i) 
+const ll LINF = 1e18;
+const int INF = 0x3f3f3f3f;
+const int MOD = 1e9 + 7;
+const int MAXN = 5e5 + 5;
+const int LOG = 20;
+vector<int> adj[MAXN];
+int dep[MAXN];
+int fa[MAXN][LOG + 1];
+void dfs(int u, int f) {
+    dep[u] = dep[f] + 1;
+    fa[u][0] = f;
+    rep(i, 1, 20) fa[u][i] = fa[fa[u][i-1]][i-1];
+    for (int v : adj[u]) {
+        if (v == f) continue;
+        dfs(v, u);
     }
 }
-
-int lca(int u, int v){
-    // 统一u在下面 (深度更大)
-    if (depth[u] < depth[v]) swap(u, v);
-    
-    // 让u向上跳直到和v同一层
-    for (int i = 20; i >= 0; --i){
-        // 如果跳完之后深度依然 >= v 的深度，那就跳
-        if (depth[ up[u][i] ] >= depth[v]){
-            u = up[u][i];
+int lca(int u, int v) {
+    if (dep[u] < dep[v]) swap(u, v);
+    per(i, LOG, 0) {
+        if (dep[fa[u][i]] >= dep[v]) u = fa[u][i];
+    }
+    if (u == v) return u;
+    per(i, LOG, 0) {
+        if (fa[u][i] != fa[v][i]) {
+            u = fa[u][i];
+            v = fa[v][i];
         }
     }
-    
-    // 1.当u和v同一层发现一样, 那么v就是u的祖先
-    if (u == v) return v;
-    
-    // 2.u和v同一层不一样, 两个一起向上跳, 直到LCA的下方
-    for (int i = 20; i >= 0; --i){
-        // 跳的不够高 (还没相遇)，继续跳
-        if (up[u][i] != up[v][i]){
-            u = up[u][i];
-            v = up[v][i];
-        }
-    }
-    
-    // 最后u和v都在LCA的下方了，再往上一步就是 LCA
-    return up[u][0];
+    return fa[u][0];
 }
-
-int main(){
-    // 加速
-    ios::sync_with_stdio(false);
-    cin.tie(0);
-
-    cin >> n >> m >> s;
-    for (int i = 1; i <= n - 1; ++i){
-        cin >> x >> y;
-        adj[x].push_back(y);
-        adj[y].push_back(x);
+void solve() {
+    int n, m, s; cin >> n >> m >> s;
+    rep(i, 1, n-1) {
+        int u, v; cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
-
     dfs(s, 0);
-
-    for (int i = 1; i <= m; ++i){
-        cin >> a >> b;
-        cout << lca(a, b) << '\n';
+    rep(i, 1, m) {
+        int u, v; cin >> u >> v;
+        cout << lca(u, v) << nl;
     }
-    return 0;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+#ifdef LOCAL
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+#endif
+    int tt = 1;
+    // cin >> tt;
+    while (tt--) solve();
 }

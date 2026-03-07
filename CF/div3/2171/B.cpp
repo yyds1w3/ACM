@@ -1,35 +1,24 @@
-#include <iostream>
+#include <bits/stdc++.h>
+#ifdef LOCAL
+#include "basic/debug.h"
+#else
+#define debug(...) 42
+#endif
+using ll = long long;
+using i128 = __int128;
 using namespace std;
+#define nl "\n"
+void solve() {
+    
+}
 
-int a[200000];
-
-long long ans = 0;
-int main(){
-    int t, n, x;
-    cin >> t;
-    for (int i = 0; i < t; ++i){
-        cin >> n;
-        for (int j = 0; j < n; ++j){
-            cin >> x;
-            if (j != 0 && j != n-1 && x == -1) x = 0; 
-            a[j] = x;
-        }
-        if (a[0] == -1 && a[n-1] != -1){
-            ans = 0;
-            a[0] = a[n-1];
-        }else if (a[n-1] == -1 && a[0] != -1){
-            ans = 0;
-            a[n-1] = a[0];
-        }else if (a[n-1] == -1 && a[0] == -1){
-            ans == 0;
-            a[n-1] = a[0] = 0;
-        }{
-            ans = abs(a[n-1] - a[0]);
-        }
-        cout << ans << endl;
-        for (int j = 0; j < n; ++j){
-            cout << a[j] << " ";
-        }
-        cout << endl;
-    }
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+#ifdef LOCAL
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+#endif
+    int tt = 1;
+    cin >> tt;
+    while (tt--) solve();
 }

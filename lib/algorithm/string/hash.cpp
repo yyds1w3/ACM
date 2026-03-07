@@ -1,44 +1,32 @@
-/**
- * Algorthim: Hash
- * Verified: Luogu P3370
- * Complexity: Init O(N), Query O(1)
- * Author: Qingw
- */
 #include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-using ull = unsigned long long;
-using uint = unsigned int;
-using lll = __int128;
-const ll LINF = 1e18;
-const int INF = 0x3f3f3f3f;
-// ================Start=========================
-const int P = 131;
-// 字符串的整串hash
-set<ull> st;
-ull get_hash(string s) {
-    ull res = 0;
-    int sz = s.size();
-    for (int i = 0; i < sz; ++i) res = res * P + s[i];
-    return res;
-}
-// 字符串的区间hash
-const int MAXN = 1e5 + 1; // 字符串长度
-ull h[MAXN], p[MAXN]; 
-void init(string s) {
-    int sz = s.size();
-    p[0] = 1;
-    h[0] = 0;
-    for (int i = 0; i < sz; ++i) {
-        p[i + 1] = p[i] * P; // p[1] = p, p[2] = p^2
-        h[i + 1] = h[i] * P + s[i]; // h[1] = s[0], h[2] = s[0] * p + s[1]
-    }
-}
-ull get_hash(int l, int r) { // 1-based ==> l = 2, r = 4 ==> 1234 ==> 234
-    return h[r] - h[l - 1] * p[r - l + 1]; // 1234 - 1 * p[3] = 234
-}
-bool is_equal(int l1, int r1, int l2, int r2) {
-    return get_hash(l1, r1) == get_hash(l2, r2);
-}
+#include <vector>
+using i64 = long long;
+struct stringHash {
+    int P1 = 131;
+    int P2 = 13331;
+    int MOD1 = 1e9 + 7;
+    int MOD2 = 1e9 + 9;
+    std::vector<i64> h1, p1, h2, p2;
 
-// ===============End============================
+    stringHash(const std::string& s) {
+        int n = s.size();
+        h1.assign(n + 1, 0);
+        h2.assign(n + 1, 0);
+        p1.assign(n + 1, 0);
+        p2.assign(n + 1, 0);
+        p1[0] = p2[0] = 1;
+        // h[i] 表示[0, i)的hash值
+        // p[i] 表示s[i]位的基数
+        for (int i = 0; i < n; ++i) {
+            p1[i+1] = (p1[i] * P1) % MOD1;
+            h1[i+1] = (h1[i] * P1 + s[i]) % MOD1;
+            p2[i+1] = (p2[i] * P2) % MOD2;
+            h2[i+1] = (h2[i] * P2 + s[i]) % MOD2;
+        }
+    }
+    std::pair<i64, i64> get(int l, int r) {
+        i64 res1 = (h1[r] - h1[l] * p1[r - l] % MOD1 + MOD1) % MOD1;
+        i64 res2 = (h2[r] - h2[l] * p2[r - l] % MOD2 + MOD2) % MOD2;
+        return {res1, res2};
+    }
+};

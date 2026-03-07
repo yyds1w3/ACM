@@ -1,44 +1,50 @@
 #include <bits/stdc++.h>
+#ifdef LOCAL
+#include "basic/debug.h"
+#else
+#define debug(...) 42
+#endif
+#define nl "\n"
+#define rep(i,s,e) for (int i = s; i <= e; ++i)
+#define repp(i,e,s) for (int i = e; i >= s; --i) 
 using namespace std;
-typedef long long ll;
-
-#define FELIX 1
-#define IOS ios::sync_with_stdio(false); cin.tie(0); cout.tie(0);
-#define Open(s) freopen(s ".in", "r", stdin); freopen(s ".out", "w", stdout);
+using ll = long long;
+using ull = unsigned long long;
+using uint = unsigned int;
+using lll = __int128;
+const ll LINF = 1e18;
+const int INF = 0x3f3f3f3f;
+const int MAXN = 1e5 + 5;
 ll x, y, k;
-bool check(ll ost){
-    for (ll i = 0; i < x; ++i){
-        ost -= ost / y;
-        if (ost < y) break;
+bool check(ll v) {
+    rep(i, 1, x) {
+        if (v < y) break;
+        v -= v / y;
     }
-    return ost >= k;
+    return v < k;
 }
-void solve(){
+void solve() {
     cin >> x >> y >> k;
-    ll l = 0, r = 1e12 + 1;
-    while (l < r){
-        ll mid = (l + r) / 2;
-        if (check(mid)){
-            r = mid;
-        }else{
-            l = mid + 1;
+    ll st = 0, en = 1e12 + 1;
+    while (st < en) {
+        ll mid = (st + en) >> 1;
+        if (check(mid)) {
+            st = mid + 1; 
+        }else {
+            en = mid;
         }
     }
-    if (r == 1e12 + 1) cout << "-1" << '\n';
-    else cout << r << '\n';
+    if (st <= 1e12 && st >= 1) cout << st << nl;
+    else cout << -1 << endl;
 }
-int main() {
-    IOS;
-#if FELIX
-    auto _clock_start = chrono::high_resolution_clock::now();
-#endif
-    int t;
-    cin >> t;
-    while (t--) solve();
-    
 
-#if FELIX
-    cerr << "Executed in " << chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - _clock_start).count() << "ms." << endl;
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+#ifdef LOCAL
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
 #endif
-    return 0;
+    int tt = 1;
+    cin >> tt;
+    while (tt--) solve();
 }

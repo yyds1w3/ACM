@@ -1,56 +1,43 @@
-/**
- * Algorithm: monotonic queue
- * Verified: Luogu P3373
- * Complexity: O(N) to find the mx and mn in the array
- * Author: Qingw
- */
 #include <bits/stdc++.h>
-#include <deque>
-#include <vector>
+#ifdef LOCAL
+#include "basic/debug.h"
+#else
+#define debug(...) 42
+#endif
+#define nl "\n"
+#define rep(i,s,e) for (int i = s; i <= e; ++i)
 using namespace std;
-typedef long long ll;
-
-#define IOS ios::sync_with_stdio(false); cin.tie(0); cout.tie(0);
-#define Open(s) freopen(s ".in", "r", stdin); freopen(s ".out", "w", stdout);
-
-
-// ==================satrt============================
-struct MonoQueue{
-    // k 指的是滑动窗口的最大值
-    int get_max(const vector<int> &a, int k){
-        int mx = -0x3f3f3f3f;
-        deque<int> q;
-        for (int i = 0; i < a.size(); ++i){
-            while (!q.empty() && a[q.back()] <= a[i]) q.pop_back();
-            q.push_back(i);
-            while (!q.empty() && q.front() <= i - k) q.pop_front();
-            mx = max(mx, a[q.front()]);
+using ll = long long;
+using ull = unsigned long long;
+using uint = unsigned int;
+using lll = __int128;
+const ll LINF = 1e18;
+const int INF = 0x3f3f3f3f;
+const int MAXN = 3e6 + 5;
+int a[MAXN];
+int st[MAXN], top;
+int ans[MAXN];
+void solve() {
+    int n; cin >> n;
+    rep(i, 1, n) cin >> a[i];
+    rep(i, 1, n) {
+        while (top > 0 && a[i] > a[st[top]]) { // 维护一个单调递减的栈
+            ans[st[top]] = i;
+            top--;
         }
-        return mx;
+        st[++top] = i;
     }
-    int get_min(const vector<int> &a, int k){
-        int mn = 0x3f3f3f3f;
-        deque<int> q;
-        for (int i = 0; i < a.size(); ++i){
-            while (!q.empty() && a[q.back()] >= a[i]) q.pop_back();
-            q.push_back(i);
-            while (!q.empty() && q.front() <= i - k) q.pop_front();
-            mn = min(mn, a[q.front()]);
-        }
-        return mn;
-    }
-};
+    while (top) {ans[st[top]] = 0; top--;}
+    rep(i, 1, n) cout << ans[i] << " ";
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-// ========================End=================================
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+#ifdef LOCAL
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+#endif
+    int tt = 1;
+    // cin >> tt;
+    while (tt--) solve();
+}

@@ -1,51 +1,42 @@
-// 错在了没有开ll， 整数相乘很有可能溢出
 #include <bits/stdc++.h>
-#include <map>
-using namespace std;
-typedef long long ll;
-
+#include <vector>
 #ifdef LOCAL
 #include "basic/debug.h"
 #else
-#define debug(x) 42
+#define debug(...) 42
 #endif
+#define nl "\n"
+#define rep(i,s,e) for (int i = s; i <= (int)e; ++i)
+#define per(i,e,s) for (int i = e; i >= (int)s; --i) 
+using namespace std;
+using ll = long long;
+using ull = unsigned long long;
+using uint = unsigned int;
+using lll = __int128;
+const ll LINF = 1e18;
+const int INF = 0x3f3f3f3f;
+const int MAXN = 2e5 + 5;
+int a[MAXN];
+map<int, int> mp;
 void solve() {
-    int n;
-    cin >> n;
-    map<int, int> mp;
-    for (int i = 1; i <=n; ++i){
-        int x;
-        cin >> x;
-        if (mp[x-i]) mp[x-i]++;
-        else mp[x-i] = 1;
-    }
+    int n; cin >> n;
+    mp.clear();
     ll ans = 0;
-    for (auto p : mp){
-        debug(p);
-        ans += (ll)p.second * (p.second - 1) / 2;
+    rep(i, 1, n) {
+        cin >> a[i];
+        a[i] -= i;
+        ans += mp[a[i]]++;
     }
-    cout << ans << endl;
+    cout << ans << nl;
 }
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 #ifdef LOCAL
-    if (fopen("in.txt", "r")) {
-        freopen("in.txt", "r", stdin);
-    }
-    auto _clock_start = chrono::high_resolution_clock::now();
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
 #endif
     int tt = 1;
     cin >> tt;
-    while (tt--) {
-        solve();
-    }
-#ifdef LOCAL
-    auto _clock_end = chrono::high_resolution_clock::now();
-    cerr << "Run Time: " 
-         << chrono::duration_cast<chrono::milliseconds>(_clock_end - _clock_start).count() 
-         << " ms" << endl;
-#endif
-    return 0;
+    while (tt--) solve();
 }

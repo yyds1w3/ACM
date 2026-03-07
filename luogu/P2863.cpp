@@ -1,65 +1,66 @@
 #include <bits/stdc++.h>
+#include <vector>
+#ifdef LOCAL
+#include "basic/debug.h"
+#else
+#define debug(...) 42
+#endif
+using ll = long long;
+using lll = __int128;
 using namespace std;
-
-const int N = 1e5 + 5;
-vector<int> adj[N];
-int dfn[N], low[N]; // dfn是dfs第几个, low是不走回头路可以到的最远节点
-int timestamp;
-stack<int> stk; // 根据在栈中来判断是否是未完成的scc
-bool in_stack[N];
-
-int scc_count; // scc 的idx
-int scc_id[N]; // 每个节点对应的sccidx
-int scc_size[N]; // 每个节点对应的sccidx对应的大小
-
-void tarjan(int u){
-    dfn[u] = low[u] = ++timestamp;   
-    stk.push(u);
-    in_stack[u] = true;
-    for (int v : adj[u]){ // 遍历每个边
-        if (!dfn[v]){ // 未访问过
-            tarjan(v); // 递归访问
-            low[u] = min(low[u], low[v]); // 回溯更新low
-        } else if(in_stack[v]){ // 在我们的未完成的scc中
-            low[u] = min(low[u], dfn[v]);  // 更新low
+#define nl "\n"
+#define rep(i,s,e) for (ll i = s; i <= (e); ++i)
+#define per(i,e,s) for (ll i = e; i >= (s); --i) 
+const ll LINF = 1e18;
+const int INF = 0x3f3f3f3f;
+const int MOD = 1e9 + 7;
+const int MAXN = 2e5 + 5;
+vector<int> adj[MAXN];
+int dfn[MAXN], low[MAXN], stk[MAXN], top, timer;
+bool in_stk[MAXN];
+int ans;
+void tarjan(int u) {
+    dfn[u] = low[u] = ++timer;
+    stk[++top] = u;
+    in_stk[u] = true;
+    for (int v : adj[u]) {
+        if (!dfn[v]) {
+            tarjan(v);
+            low[u] = min(low[u], low[v]);
+        }else if (in_stk[v]){
+            low[u] = min(low[u], dfn[v]);
         }
     }
-    if (dfn[u] == low[u]){ // 根节点
-        scc_count++; 
-        int y;
-        // 将u之上的所有节点弹出，并且合并成一个scc强连通分量
-        do{
-            y = stk.top(); 
-            stk.pop();
-            in_stack[y] = false;
-            scc_id[y] = scc_count;
-            scc_size[scc_count]++;
-        } while(y != u);
+    if (dfn[u] == low[u]) {
+        int cnt = 0;
+        int v;
+        do {
+            v = stk[top--];
+            in_stk[v] = false;
+            cnt++;
+        }while (u != v);
+        if (cnt > 1) ans++;
     }
 }
-int main(){
-    ios::sync_with_stdio(false);
-    cin.tie(0);
-
-    int n, m;
-    cin >> n >> m;
-    
-    for (int i = 0; i < m; i++) {
-        int u, v;
-        cin >> u >> v;
+void solve() {
+    int n, m; cin >> n >> m;
+    rep(i, 1, m) {
+        int u, v; cin >> u >> v;
         adj[u].push_back(v);
     }
-    
-    for (int i = 1; i <= n; i++) {
-        if (!dfn[i]) {
-            tarjan(i);
-        }
+    rep(i, 1, n) {
+        if (!dfn[i]) tarjan(i);
     }
-    int ans = 0;
-    for(int i = 1; i <= scc_count; i++){
-        if(scc_size[i] > 1) ans++;
-    }
-    cout << ans << endl;
-    
-    return 0;
+    cout << ans << nl;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+#ifdef LOCAL
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+#endif
+    int tt = 1;
+    // cin >> tt;
+    while (tt--) solve();
 }

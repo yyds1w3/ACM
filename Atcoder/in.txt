@@ -1,0 +1,8 @@
+6
+login
+private
+public
+logout
+private
+public
+

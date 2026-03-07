@@ -1,44 +1,54 @@
 #include <bits/stdc++.h>
+#ifdef LOCAL
+#include "basic/debug.h"
+#else
+#define debug(...) 42
+#endif
+using ll = long long;
+using lll = __int128;
 using namespace std;
-const int N = 101;
-const int INF = 0x3F3f3f3f;
+#define nl "\n"
+#define rep(i,s,e) for (ll i = s; i <= (e); ++i)
+#define per(i,e,s) for (ll i = e; i >= (s); --i) 
+const ll LINF = 1e18;
+const int INF = 0x3f3f3f3f;
+const int MOD = 1e9 + 7;
+const int MAXN = 1e2 + 5;
 int n, m;
-int dp[N][N];
-
-int main()
-{
-    ios::sync_with_stdio(false);
-    cin.tie(0);
-    memset(dp, 0x3f, sizeof(dp));
+ll dist[MAXN][MAXN];
+void floyd(){
+    rep(k, 1, n) rep(i, 1, n) rep(j, 1, n) {
+        dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
+    }
+}
+void solve() {
     cin >> n >> m;
-    for (int i = 1; i <= n; ++i){
-        dp[i][i] = 0;
-    }
-    for (int i = 1; i <= m; ++i)
-    {
-        int u, v, w;
-        cin >> u >> v >> w;
-        dp[u][v] = dp[v][u] = min(dp[u][v], w);
-    }
-    for (int k = 1; k <= n; ++k)
-    {
-        for (int i = 1; i <= n; ++i)
-        {
-            for (int j = 1; j <= n; ++j)
-            {
-                if (dp[i][k] != INF && dp[k][j] != INF)
-                {
-                    dp[i][j] = min(dp[i][j], dp[i][k] + dp[k][j]);
-                }
-            }
+    rep(i, 1, n) {
+        rep(j, 1, n) {
+            if (i == j) dist[i][j] = 0;
+            else dist[i][j] = LINF;
         }
     }
-    for (int i = 1; i <= n; ++i)
-    {
-        for (int j = 1; j <= n; ++j)
-        {
-            cout << dp[i][j] << " ";
-        }
-        cout << '\n';
+    rep(i, 1, m) {
+        ll u, v, w; cin >> u >> v >> w;
+        dist[u][v] = min(dist[u][v], w);
+        dist[v][u] = min(dist[v][u], w);
     }
+    floyd();
+    rep(i, 1, n) {
+        rep(j, 1, n) 
+            cout << dist[i][j] << " ";
+        cout << nl;
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+#ifdef LOCAL
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+#endif
+    int tt = 1;
+    // cin >> tt;
+    while (tt--) solve();
 }

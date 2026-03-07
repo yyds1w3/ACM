@@ -1,65 +1,66 @@
-#include <iostream>
+#include <bits/stdc++.h>
 #include <vector>
-#include <algorithm>
+#ifdef LOCAL
+#include "basic/debug.h"
+#else
+#define debug(...) 42
+#endif
+using ll = long long;
+using lll = __int128;
 using namespace std;
-typedef long long ll;
-const int N = 1e3+5;
-int n, m, k, x, y, l;
-ll ans = 0, sub = 0;
-int fa[N];
+#define nl "\n"
+#define rep(i,s,e) for (ll i = s; i <= (e); ++i)
+#define per(i,e,s) for (ll i = e; i >= (s); --i) 
+const ll LINF = 1e18;
+const int INF = 0x3f3f3f3f;
+const int MOD = 1e9 + 7;
+const int MAXN = 1e3 + 5;
 struct Edge{
     int u, v, w;
-    bool operator<(const Edge& other) {return w < other.w;}
+    bool operator<(const Edge& other) const {return w < other.w;}
 };
-vector<Edge> Edges;
-void init(){
-    cin >> n >> m >> k;
-    for (int i = 1; i <= n; ++i){
-        fa[i] = i;
-    }
-    for (int i = 1; i <= m; ++i){
-        cin >> x >> y >> l;
-        Edges.push_back({x, y, l});
+vector<Edge> vec;
+int fa[MAXN];
+int find(int x) {
+    return fa[x] == x ? x : fa[x] = find(fa[x]);
+}
+void merge(int x, int y ) {
+    int rx = find(x);
+    int ry = find(y);
+    if (rx != ry) {
+        fa[rx] = ry;
     }
 }
-int find(int x){
-    if (fa[x] == x){
-        return x;
+void solve() {
+    int n, m, k; cin >> n >> m >> k;
+    rep(i, 1, n) fa[i] = i;
+    rep(i, 1, m) {
+        int u, v, w; cin >> u >> v >> w;
+        vec.push_back({u, v, w});
     }
-    return fa[x] = find(fa[x]);
-}
-void join(int x, int y){
-    int rootX = find(x);
-    int rootY = find(y);
-    if (rootX != rootY){
-        fa[rootX] = rootY;
+    sort(vec.begin(), vec.end());
+    ll ans = 0;
+    ll cnt = n;
+    for (auto [u, v, w] : vec) {
+        if (cnt == k) break;
+        if (find(u) == find(v)) continue;
+        merge(u, v);
+        ans += w;
+        cnt--;
     }
+    if (cnt == k) cout << ans << nl;
+    else cout << "No Answer" << nl;
+
+
 }
 
-void kruskal(){
-    if (n == k){
-        cout << 0;
-        return;
-    }else if (n < k){
-        cout << "No Answer";
-        return;
-    }
-    sort(Edges.begin(), Edges.end());
-    for (auto e : Edges){
-        if (find(e.u) != find(e.v)){
-            join(e.u, e.v);
-            ans += e.w;
-            sub++;
-            if (sub == n - k){
-                cout << ans;
-                return;
-            }
-        }
-    }
-    cout << "No Answer";
-}
-
-int main(){
-    init();
-    kruskal();
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+#ifdef LOCAL
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+#endif
+    int tt = 1;
+    // cin >> tt;
+    while (tt--) solve();
 }

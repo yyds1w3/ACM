@@ -1,69 +1,64 @@
 #include <bits/stdc++.h>
-#ifdef LOCAL
-#include "basic/debug.h"
-#else
-#define debug(...) 42
-#endif
 using namespace std;
 using ll = long long;
-using ull = unsigned long long;
-using uint = unsigned int;
 using i128 = __int128;
-const int MAXN = 5e5 + 5;
-int n, m;
-int tree[MAXN];
-int lowbit(int x){
-    return x & (-x);
-}
-void add(int x, int k){
-    while (x <= n){
-        tree[x] += k;
-        x += lowbit(x);
+#define nl "\n"
+#define debug(x) cerr << x << endl
+
+template <typename T>
+struct BIT {
+    int n;
+    std::vector<T> a;
+    
+    BIT(int n_ = 0) {
+        init(n_);
     }
-}
-int ask(int x){
-    int ans = 0;
-    while (x){
-        ans += tree[x];
-        x -= lowbit(x);
+    
+    void init(int n_) {
+        n = n_;
+        a.assign(n + 1, T{});
     }
-    return ans;
-}
-void solve() {
-    cin >> n >> m;
-    int last = 0;
-    for (int i = 1; i <= n; ++i){
-        int cur;
-        cin >> cur;
-        add(i, cur - last);
-        last = cur;
-    }
-    for (int i = 1; i <= m; ++i){
-        int op;
-        cin >> op;
-        if (op == 1){
-            int x, y, k;
-            cin >> x >> y >> k;
-            add(x, k);
-            add(y + 1, -k);
-        }else{
-            int x;
-            cin >> x;
-            cout << ask(x) << endl;
+    
+    void add(int x, const T &v) {
+        for (int i = x; i <= n; i += i & -i) {
+            a[i] = a[i] + v;
         }
     }
-}
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) {
-        solve();
+    
+    T sum(int x) {
+        T ans{};
+        for (int i = x; i >= 1; i -= i & -i) {
+            ans = ans + a[i];
+        }
+        return ans;
     }
-    return 0;
+    
+    T rangeSum(int l, int r) {
+        return sum(r) - sum(l-1);
+    }
+};
+int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
+    #ifdef LOCAL
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+    #endif
+    int n, m; cin >> n >> m;
+    BIT<int> bit(n);
+    int pre = 0, nxt = 0;
+    for (int i = 1; i <= n; ++i) {
+        cin >> nxt;
+        bit.add(i, nxt - pre);
+        pre = nxt;
+    }
+    for (int i = 1; i <= m; ++i) {
+        int op, x, y, k; cin >> op;
+        if (op == 1) {
+            cin >> x >> y >> k;
+            bit.add(x, k);
+            bit.add(y+1, -k);
+        }else {
+            cin >> x;
+            cout << bit.sum(x) << nl;
+        }
+    }
 }

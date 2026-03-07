@@ -1,64 +1,76 @@
-#include <algorithm>
 #include <bits/stdc++.h>
-#ifdef LOCAL
-#include "basic/debug.h"
-#else
-#define debug(...) 42
-#endif
-using namespace std;
+#include <vector>
 using ll = long long;
-using ull = unsigned long long;
-using uint = unsigned int;
 using i128 = __int128;
-const int MAXN = 1e3 + 5;
-const int MAXM = 1e5 + 5;
-int fa[MAXN];
-struct Edge{
-    int u, v, w;
-    bool operator<(const Edge& other)const {return w < other.w;}
-}adj[MAXM];
-int find(int x){
-    return fa[x] == x ? x : fa[x] = find(fa[x]);
-}
-bool merge(int x, int y){
-    int rx = find(x);
-    int ry = find(y);
-    if (rx != ry) {
-        fa[rx] = ry;
+#define nl "\n"
+struct DSU {
+    std::vector<int> f, siz;
+    
+    DSU() {}
+    DSU(int n) {
+        init(n);
+    }
+    
+    void init(int n) {
+        f.resize(n);
+        std::iota(f.begin(), f.end(), 0);
+        siz.assign(n, 1);
+    }
+    
+    int find(int x) {
+        while (x != f[x]) {
+            x = f[x] = f[f[x]];
+        }
+        return x;
+    }
+    
+    bool same(int x, int y) {
+        return find(x) == find(y);
+    }
+    
+    bool merge(int x, int y) {
+        x = find(x);
+        y = find(y);
+        if (x == y) {
+            return false;
+        }
+        siz[x] += siz[y];
+        f[y] = x;
         return true;
     }
-    return false;
-}
-void solve() {
-    int n, m;
-    cin >> n >> m;
-    for (int i = 1; i <= m; ++i) cin >> adj[i].u >> adj[i].v  >> adj[i].w;
-    sort(adj + 1, adj + 1 + m);
-    for (int i = 1; i <= n; ++i) fa[i] = i;
-    int ans = 0, cnt = 0;
-    for (int i = 1; i <= m; ++i){
-        if (merge(adj[i].u, adj[i].v)){
-            ans = adj[i].w;
-            cnt++;
-            if (cnt == n-1){
-                cout << ans << endl;
-                return;
-            }
+    
+    int size(int x) {
+        return siz[find(x)];
+    }
+};
+struct Info {
+    int u, v, t;
+    bool operator<(const Info & other) const {return t < other.t;}
+};
+int main() {
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+    #endif
+    int N, M;
+    std::cin >> N >> M;
+    DSU dsu(N);
+    std::vector<Info> A(M);
+    for (int i = 0; i < M; ++i) {
+        std::cin >> A[i].u >> A[i].v >> A[i].t;
+        A[i].u--;
+        A[i].v--;
+    }
+    sort(A.begin(), A.end());
+    for (int i = 0; i < M; ++i) {
+        auto [u, v, t] = A[i];
+        if (u > v) std::swap(u, v);
+        dsu.merge(u, v);
+        if (dsu.size(0) == N) {
+            std::cout << t << nl;
+            return 0;
         }
     }
-    cout << -1 << endl;
-}
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) {
-        solve();
-    }
-    return 0;
+    std::cout << -1 << nl;
 }

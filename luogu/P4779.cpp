@@ -1,42 +1,62 @@
 #include <bits/stdc++.h>
+#include <cstring>
+#include <queue>
+#include <vector>
+#ifdef LOCAL
+#include "basic/debug.h"
+#else
+#define debug(...) 42
+#endif
+using ll = long long;
+using lll = __int128;
 using namespace std;
-const int N = 1e5 + 5;
+#define nl "\n"
+#define rep(i,s,e) for (ll i = s; i <= (e); ++i)
+#define per(i,e,s) for (ll i = e; i >= (s); --i) 
+const ll LINF = 1e18;
 const int INF = 0x3f3f3f3f;
-int n, m, s;
-int u, v, w;
-struct Point{
-    int u, w;
-    bool operator> (const Point& a) const{
-        return w > a.w;
-    }
+const int MOD = 1e9 + 7;
+const int MAXN = 2e5 + 5;
+struct Edge {
+    ll to, w;
+    bool operator<(const Edge& other) const {return w > other.w;}
 };
-vector<Point> adj[N];
-priority_queue<Point, vector<Point>, greater<Point>> pq;
-int dist[N];
-void bfs_dli(){
-    pq.push({s, 0});
+vector<Edge> adj[MAXN];
+ll dist[MAXN];
+void dji(int s) {
+    memset(dist, 0x3f, sizeof(dist));
     dist[s] = 0;
-    while(!pq.empty()){
-        Point curr = pq.top();
+    priority_queue<Edge> pq;
+    pq.push({s, 0});
+    while (!pq.empty()) {
+        auto [u, w] = pq.top();
         pq.pop();
-        if (curr.w > dist[curr.u]) continue; // 刚取出来的比原来的还大就不要了, 比如第一次存的是5, 后来更新成了3，就要选3的, 一定绕路了就舍弃
-        for (auto edge : adj[curr.u]){
-            if (dist[curr.u] + edge.w < dist[edge.u]){ // 新路径更小
-                dist[edge.u] = dist[curr.u] + edge.w;
-                pq.push({edge.u, dist[edge.u]});  // 把最新的最小路径存进去,作为新的起点,如果新路径是绕路就不会存
+        if (dist[u] < w) continue;
+        for (auto [v, w] : adj[u]) {
+            if (w + dist[u] < dist[v]) {
+                dist[v] = dist[u] + w;
+                pq.push({v, dist[v]});
             }
         }
     }
-    for (int i = 1; i <= n; ++i){
-        cout << dist[i] << " ";
-    }
 }
-int main(){
-    cin >> n >> m >> s;
-    for (int i = 1; i <= m; ++i){
-        cin >> u >> v >> w;
+void solve() {
+    int n, m, s; cin >> n >> m >> s;
+    rep(i, 1, m) {
+        int u, v, w; cin >> u >> v >> w;
         adj[u].push_back({v, w});
     }
-    memset(dist, 0x3f, sizeof(dist));
-    bfs_dli();
+    dji(s);
+    rep(i, 1, n) cout << dist[i] << " ";
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+#ifdef LOCAL
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+#endif
+    int tt = 1;
+    // cin >> tt;
+    while (tt--) solve();
 }

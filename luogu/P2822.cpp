@@ -1,38 +1,39 @@
-// 二维前缀和
-// 杨辉三角
-// 先杨辉三角初始化，除以模，再二维前缀和使得查询O(1)
 #include <bits/stdc++.h>
 #ifdef LOCAL
 #include "basic/debug.h"
 #else
 #define debug(...) 42
 #endif
+using ll = long long;
+using lll = __int128;
 using namespace std;
-typedef long long ll;
-typedef unsigned long long ull;
-typedef unsigned int uint;
-const int MAXN = 2e3 + 1;
-const int MAXT = 1e4 + 1;
+#define nl "\n"
+#define rep(i,s,e) for (int i = s; i <= (e); ++i)
+#define per(i,e,s) for (ll i = e; i >= (s); --i) 
+const ll LINF = 1e18;
+const int INF = 0x3f3f3f3f;
+const int MOD = 1e9 + 7;
+const int MAXN = 2e3 + 5;
 int C[MAXN][MAXN];
-ll pi[MAXN][MAXN];
-struct query{
-    int n, m;
-};
-query q[MAXT];
-int k;
-void init(int n){
-    C[0][0] = 1 % k;
-    for (int i = 1; i <= n; ++i){
+int pre[MAXN][MAXN];
+int k, n, m;
+void init() {
+    C[0][0] = 1;
+    rep(i, 1, 2000) {
         C[i][0] = 1;
-        for (int j = 1; j <= i; ++j){
-            C[i][j] = (C[i-1][j-1] + C[i-1][j]) % k; // % >> +优先级
+        rep(j, 1, i) {
+            C[i][j] = (C[i-1][j] + C[i-1][j-1]) % k;
         }
     }
-    for (int i = 1; i <= n; ++i){
-        for (int j = 1; j <= n; ++j){
-            pi[i][j] = pi[i-1][j] + pi[i][j-1] - pi[i-1][j-1] + (j <= i && C[i][j] == 0 ? 1 : 0);
+    rep(i, 1, 2000) {
+        rep(j, 1, 2000) {
+            pre[i][j] = pre[i-1][j] + pre[i][j-1] - pre[i-1][j-1] + (j <= i && C[i][j] == 0);
         }
     }
+}
+void solve() {
+    cin >> n >> m;
+    cout << pre[n][m] << nl;
 }
 
 int main() {
@@ -43,15 +44,6 @@ int main() {
 #endif
     int tt = 1;
     cin >> tt >> k;
-    int mx = 0;
-    for (int i = 1; i <= tt; ++i){
-        cin >> q[i].n >> q[i].m;
-        mx = max(mx, q[i].n);
-    }
-    debug(mx);
-    init(mx);
-    for (int i = 1; i <= tt; ++i){
-        cout << pi[q[i].n][min(q[i].n, q[i].m)] << "\n";// 不能把超过n的零区域也计算 !!!
-    }
-    return 0;
+    init();
+    while (tt--) solve();
 }

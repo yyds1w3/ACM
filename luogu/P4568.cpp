@@ -1,61 +1,74 @@
 #include <bits/stdc++.h>
-#define IOS ios::sync_with_stdio(false); cin.tie(0); cout.tie(0);
+#ifdef LOCAL
+#include "basic/debug.h"
+#else
+#define debug(...) 42
+#endif
+using ll = long long;
+using lll = __int128;
 using namespace std;
-typedef long long ll;
-const int N = 1e4 + 5;
-const int K = 11;
+#define nl "\n"
+#define rep(i,s,e) for (ll i = s; i <= (e); ++i)
+#define per(i,e,s) for (ll i = e; i >= (s); --i) 
+const ll LINF = 1e18;
 const int INF = 0x3f3f3f3f;
-int n, m, k, s, t;
-int dist[N][K];
-vector<pair<int, int>> adj[N];
-struct Node{
-    int u;
-    int d; 
-    int k;
-    bool operator<(const Node& other) const {
-        return d > other.d; 
-    }
+const int MOD = 1e9 + 7;
+const int MAXN = 1e4 + 5;
+struct Edge {
+    int to, w;
 };
-void dijkstra(int s){
-    memset(dist, 0x3f, sizeof(dist)); 
-    priority_queue<Node> pq;
+struct Node {
+    int u, cost, k;
+    bool operator<(const Node& other)const {return cost > other.cost;}
+};
+vector<Edge> adj[MAXN];
+int dist[MAXN][15];
+int n, m, k, s, t; 
+void dji() {
+    rep(i, 0, n-1) {
+        rep(j, 0, k) {
+            dist[i][j] = INF;
+        }
+    }
     dist[s][0] = 0;
-    pq.push({s, 0, 0}); 
-    while(!pq.empty()){
-        Node curr = pq.top();
+    priority_queue<Node> pq;
+    pq.push({s, 0, 0});
+    while (!pq.empty()) {
+        auto [u, d, j] = pq.top();
         pq.pop();
-        int u = curr.u; 
-        if (curr.d > dist[u][curr.k]) continue;
-        for (auto edge: adj[u]){ 
-            int v = edge.first;
-            int w = edge.second;
-            if (dist[v][curr.k] > dist[u][curr.k] + w){
-                dist[v][curr.k] = dist[u][curr.k] + w;
-                pq.push({v, dist[v][curr.k], curr.k});
+        if (d > dist[u][j]) continue;
+        for (auto [v, w] : adj[u]) {
+            if (dist[u][j] + w < dist[v][j]) {
+                dist[v][j] = dist[u][j] + w;
+                pq.push({v, dist[v][j], j});
             }
-            if (curr.k < k && dist[v][curr.k+1] > dist[u][curr.k]){
-                dist[v][curr.k+1] = dist[u][curr.k];
-                pq.push({v, dist[v][curr.k+1], curr.k + 1});
+            if (j < k && dist[u][j] < dist[v][j+1]) {
+                dist[v][j+1] = dist[u][j];
+                pq.push({v, dist[v][j+1], j+1});
             }
         }
     }
-    int ans = INF;
-    for (int i = 0; i <=  k; ++i){
-        ans = min(ans, dist[t][i]);
-    }
-    cout << ans;
 }
-void solve(){
+void solve() {
     cin >> n >> m >> k >> s >> t;
-    for(int i = 0; i < m; i++) {
-        int u, v, w;
-        cin >> u >> v >> w;
+    rep(i, 1, m) {
+        int u, v, w; cin >> u >> v >> w;
         adj[u].push_back({v, w});
         adj[v].push_back({u, w});
     }
-    dijkstra(s);
+    dji();
+    int ans = INF;
+    rep(i, 0, k) ans = min(ans, dist[t][i]);
+    cout << ans << nl;
 }
-int main(){
-    IOS
-    solve();
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+#ifdef LOCAL
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+#endif
+    int tt = 1;
+    // cin >> tt;
+    while (tt--) solve();
 }

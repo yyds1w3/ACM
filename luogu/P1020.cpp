@@ -1,58 +1,44 @@
-#include <algorithm>
 #include <bits/stdc++.h>
 #include <functional>
 #include <vector>
-#ifdef LOCAL
-#include "basic/debug.h"
-#else
-#define debug(...) 42
-#endif
 using namespace std;
 using ll = long long;
-using ull = unsigned long long;
-using uint = unsigned int;
 using i128 = __int128;
-const int MAXN = 1e5 +5;
-int a[MAXN];
-int x, sz;
-// 不严格下降
-int get_nlis(){
-    vector<int> tail;
-    for (int i = 1; i <= sz; ++i){
-        auto it = upper_bound(tail.begin(), tail.end(), a[i], greater<int>());
-        if (it == tail.end()) tail.push_back(a[i]);
-        else *it = a[i];
+#define nl "\n"
+#define debug(x) cerr << x << endl
+struct LIS{
+    int strict(const vector<int> &a){
+        if (a.empty()) return 0;
+        vector<int> tails;
+        for (int v : a){
+            auto it = lower_bound(tails.begin(), tails.end(), v);
+            if (it == tails.end()) tails.push_back(v);
+            else *it = v;
+        }
+        return tails.size();
     }
-    return tail.size();
-}
-// 严格上升
-int get_lis(){
-    vector<int> tail;
-    for (int i = 1; i <= sz; ++i){
-        auto it = lower_bound(tail.begin(), tail.end(), a[i]);
-        if (it == tail.end()) tail.push_back(a[i]);
-        else *it = a[i];
+    int non_decreasing(const vector<int> &a){
+        if (a.empty()) return 0;
+        vector<int> tails;
+        for (int v : a){
+            auto it = upper_bound(tails.begin(), tails.end(), v, greater<int>());
+            if (it == tails.end()) tails.push_back(v);
+            else *it = v;
+        }
+        return tails.size();
     }
-    return tail.size();
-}
-void solve() {
-    while (cin >> x){
-        a[++sz] = x;
-    }
-    cout << get_nlis() << endl;
-    cout << get_lis() << endl;
-}
-
+};
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
+    cin.tie(nullptr)->sync_with_stdio(false);
+    #ifdef LOCAL
     if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) {
-        solve();
+    #endif
+    vector<int> a;
+    int x;
+    while (cin >> x) {
+        a.push_back(x);
     }
-    return 0;
+    LIS lis;
+    cout << lis.non_decreasing(a) << nl;
+    cout << lis.strict(a) << nl;
 }
