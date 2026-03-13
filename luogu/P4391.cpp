@@ -1,29 +1,26 @@
 #include <bits/stdc++.h>
-#ifdef LOCAL
-#include "basic/debug.h"
-#else
-#define debug(...) 42
-#endif
-using namespace std;
-using ll = long long;
-using ull = unsigned long long;
-using uint = unsigned int;
+#include <vector>
+using i64 = long long;
 using i128 = __int128;
-
-void solve() {
-
-}
+#define nl "\n"
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
     if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) {
-        solve();
+    #endif
+    int L;
+    std::cin >> L;
+    std::string s1;
+    std::cin >> s1;
+    std::vector<int> nxt(L + 1);
+    for (int i = 1, j = 0; i < L; ++i) {
+        while (j && s1[i] != s1[j]) {
+            j = nxt[j];
+        }
+        j += (s1[i] == s1[j]);
+        nxt[i + 1] = j;
     }
-    return 0;
+    std::cout << L - nxt[L] << nl;
 }

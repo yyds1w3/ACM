@@ -1,37 +1,35 @@
-/**
- * Algorthim: KMP (0-based)
- * Verified: CF 126B
- * Complexity: O(N + M)
- * Author: Qingw
- */
 #include <bits/stdc++.h>
-using namespace std;
-typedef long long ll;
+#include <vector>
 
-
-// =============start===============
-const int MAXN = 1e5 + 1;
-int nxt[MAXN];
-string s;
-string p;
-void init() {
-    nxt[0] = 0;
-    int m = p.size();
-    for (int i = 1, j = 0; i < m; ++i) { // i-->当前匹配字符串, j-->当前最长相同前后缀长度
-        while (j > 0 && p[i] != p[j]) j = nxt[j - 1];
-        if (p[i] == p[j]) j++;
-        nxt[i] = j;
-    }
-}
-void match() {
+std::vector<int> nxtArray(std::string &s) {
     int n = s.size();
-    int m = p.size();
-    for (int i = 0, j = 0; i < n; ++i) { // i-->s的当前字符指针位置, j-->p的当前字符指针
-        while (j > 0 && s[i] != p[j]) j = nxt[j-1];
-        if (s[i] == p[j]) j++;
+    std::vector<int> nxt(n + 1); // nxt[i] == [0, i) 的最长公共前后缀
+    // i 表示当前匹配字符下标， j 表示[0, i+1) 的最长公共前后缀的长度
+    for (int i = 1, j = 0; i < n; ++i) {
+        while (j && s[i] != s[j]) {
+            j = nxt[j];
+        }
+        j += (s[i] == s[j]);
+        nxt[i + 1] = j;
+    }
+    return nxt;
+}
+std::vector<int> kmpSearch(std::string s1, std::string s2) {
+    if (s1.empty() || s2.empty() || s2.size() > s1.size()) return {};
+    std::vector<int> res;
+    std::vector<int> nxt = nxtArray(s2);
+    int n = s1.size();
+    int m = s2.size();
+    for (int i = 0, j = 0; i < n; ++i) {
+        while (j && s1[i] != s2[j]) {
+            j = nxt[j];
+        }
+        j += (s1[i] == s2[j]);
         if (j == m) {
-            cout << "Found: " << i - m + 1 << "\n";
-            j = nxt[j-1];
+            res.push_back(i - m + 1);
+            j = nxt[j];
         }
     }
+    return res;
 }
+

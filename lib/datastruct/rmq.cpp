@@ -1,10 +1,8 @@
 #include <bits/stdc++.h>
-#include <functional>
-#include <vector>
+
 using i64 = long long;
-using i128 = __int128;
-#define nl "\n"
-template<class T, class Cmp = std::greater<T>>
+
+template<class T, class Cmp = std::less<T>>
 struct RMQ {
     int n;
     std::vector<std::vector<T>> st;
@@ -35,23 +33,3 @@ struct RMQ {
         return std::min(st[k][l], st[k][r - (1 << k)], cmp);
     }
 };
-int main() {
-    std::ios::sync_with_stdio(false); 
-    std::cin.tie(nullptr);
-    #ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-    #endif
-    int n, m;
-    std::cin >> n >> m;
-    std::vector<int> a(n);
-    for (int i = 0; i < n; ++i) {
-        std::cin >> a[i];
-    }
-    RMQ rmq(a);
-    for (int _ = 0; _ < m; ++_) {
-        int l, r;
-        std::cin >> l >> r;
-        l--, r--;
-        std::cout << rmq(l, r+1) << nl;
-    }
-}
