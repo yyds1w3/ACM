@@ -1,47 +1,38 @@
 #include <bits/stdc++.h>
+#define nl "\n"
 #ifdef LOCAL
-#include "basic/debug.h"
+#include <debug.h>
 #else
-#define debug(...) 42
+#define debug(...) 43
+#define debug_range(...) 43
 #endif
-using namespace std;
-using ll = long long;
-using ull = unsigned long long;
-using uint = unsigned int;
+using i64 = long long;
 using i128 = __int128;
-const int MAXN = 1e5 + 1;
-ll a[MAXN];
-ll diff[MAXN];
-void solve() {
-    int n;
-    cin >> n;
-    for (int i = 1; i <= n; ++i){
-        cin >> a[i];
-    }
-    for (int i = 1; i <= n; ++i){
-        diff[i] = a[i] - a[i-1];
-    }
-    ll p = 0, q = 0;
-    for (int i = 2; i <= n; ++i){
-        if (diff[i] > 0) 
-            p += diff[i];
-        else
-            q -= diff[i];
-    }
-    cout << max(p, q) << endl << abs(p - q) + 1 << endl;
 
-}
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
     if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) {
-        solve();
+    #endif
+    int n;
+    std::cin >> n;
+    std::vector<i64> a(n + 1);
+    for (int i = 1; i <= n; ++i) {
+        std::cin >> a[i];
     }
-    return 0;
+    for (int i = n; i >= 1; --i) {
+        a[i] = a[i] - a[i - 1];
+    }
+    i64 m1 = 0, m2 = 0;
+    for (int i = 2; i <= n; ++i) {
+        if (a[i] > 0) {
+            m1 += a[i];
+        }else if (a[i] <= 0) {
+            m2 -= a[i];
+        }
+    }
+    std::cout << std::max(m1, m2) << nl;
+    std::cout << std::abs(m1 - m2) + 1 << nl;
 }

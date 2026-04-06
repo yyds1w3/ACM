@@ -1,43 +1,38 @@
 #include <bits/stdc++.h>
-#ifdef LOCAL
-#include "basic/debug.h"
-#else
-#define debug(...) 42
-#endif
 #define nl "\n"
-#define rep(i,s,e) for (int i = s; i <= e; ++i)
-using namespace std;
-using ll = long long;
-using ull = unsigned long long;
-using uint = unsigned int;
-using lll = __int128;
-const ll LINF = 1e18;
-const int INF = 0x3f3f3f3f;
-const int MAXN = 3e6 + 5;
-int a[MAXN];
-int st[MAXN], top;
-int ans[MAXN];
-void solve() {
-    int n; cin >> n;
-    rep(i, 1, n) cin >> a[i];
-    rep(i, 1, n) {
-        while (top > 0 && a[i] > a[st[top]]) { // 维护一个单调递减的栈
-            ans[st[top]] = i;
-            top--;
-        }
-        st[++top] = i;
-    }
-    while (top) {ans[st[top]] = 0; top--;}
-    rep(i, 1, n) cout << ans[i] << " ";
-}
+#ifdef LOCAL
+#include <debug.h>
+#else
+#define debug(...) 43
+#define debug_range(...) 43
+#endif
+using i64 = long long;
+using i128 = __int128;
+
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
     if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) solve();
+    #endif
+    int n;
+    std::cin >> n;
+    std::vector<int> a(n);
+    for (int i = 0; i < n; ++i) {
+        std::cin >> a[i];
+    }
+    std::vector<int> stk(n);
+    std::vector<int> ans(n);
+    int top = -1;
+    for (int i = 0; i < n; ++i) {
+        while (top >= 0 && a[stk[top]] < a[i]) {
+            ans[stk[top]] = i + 1;
+            top--;
+        }
+        stk[++top] = i;
+    }
+    for (int i = 0; i < n; ++i) {
+        std::cout << ans[i] << " ";
+    }
 }

@@ -9,8 +9,6 @@ int main() {
     #ifdef LOCAL
     if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
     #endif
-    int x, y;
-    std::cin >> x >> y;
-    int ans = 10000 - (100 * (y + 100 - x)) / 2;
-    std::cout << ans << nl;
+    int x, n, y;
+    std::cout << x * n + y << nl;
 }

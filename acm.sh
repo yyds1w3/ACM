@@ -16,7 +16,7 @@ if [ $? != 0 ]; then
   # Window 1: Code 
   # ==========================================
   tmux new-session -d -s $SESSION -n "Code" -c "$WORK_DIR" -x "$(tput cols)" -y "$(tput lines)"
-  tmux split-window -h -p 25 -t $SESSION:Code -c "$WORK_DIR"
+  tmux split-window -h -p 33 -t $SESSION:Code -c "$WORK_DIR"
   tmux split-window -v -t $SESSION:Code.2 -c "$WORK_DIR"
 
   # ==========================================

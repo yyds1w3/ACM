@@ -1,47 +1,31 @@
 #include <bits/stdc++.h>
-using namespace std;
-typedef long long ll;
-
+#define nl "\n"
 #ifdef LOCAL
-#include "basic/debug.h"
+#include <debug.h>
 #else
-#define debug(...) 42
+#define debug(...) 43
+#define debug_range(...) 43
 #endif
-void PreOrder(string InString, string BackString){
-    if (BackString.empty()) return;
-    char root = BackString.back();
-    cout << root;
-    int root_pos = InString.find(root);
-    // [0,k-1] [k] [k, n] Instring
-    // [0,k-1] [k, n-1] [n] BackString
-    PreOrder(InString.substr(0, root_pos), BackString.substr(0, root_pos));
-    PreOrder(InString.substr(root_pos + 1), BackString.substr(root_pos, BackString.size()-root_pos-1));
-}
-void solve() {
-    string s1, s2;
-    cin >> s1 >> s2;
-    PreOrder(s1, s2);
-}
+using i64 = long long;
+using i128 = __int128;
+
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
-    if (fopen("in.txt", "r")) {
-        freopen("in.txt", "r", stdin);
-    }
-    auto _clock_start = chrono::high_resolution_clock::now();
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) {
-        solve();
-    }
-#ifdef LOCAL
-    auto _clock_end = chrono::high_resolution_clock::now();
-    cerr << "Run Time: " 
-         << chrono::duration_cast<chrono::milliseconds>(_clock_end - _clock_start).count() 
-         << " ms" << endl;
-#endif
-    return 0;
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+    #endif
+    std::string sm, sl;
+    std::cin >> sm >> sl;
+    auto dfs = [&](auto self, std::string sm, std::string sl) -> void {
+        if (sm.empty()) return;
+        char root = sl.back();
+        std::cout << root;
+        int lsz = sm.find(root);
+        int rsz = sl.size() - 1 - lsz;
+        self(self, sm.substr(0, lsz), sl.substr(0, lsz));
+        self(self, sm.substr(lsz + 1), sl.substr(lsz, rsz));
+    };
+    dfs(dfs, sm, sl);
 }

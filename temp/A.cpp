@@ -9,5 +9,5 @@ int main() {
     #ifdef LOCAL
     if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
     #endif
-    std::cout << "Talk is cheap. Show me the code." << nl;
+    std::cout << "If people never did silly things, nothing intelligent would ever get done." << nl;
 }

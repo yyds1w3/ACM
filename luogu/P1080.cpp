@@ -1,95 +1,103 @@
 #include <bits/stdc++.h>
-#include <cassert>
-#ifdef LOCAL
-#include "basic/debug.h"
-#else
-#define debug(...) 42
-#endif
 #define nl "\n"
-#define rep(i,s,e) for (int i = s; i <= (int)e; ++i)
-#define per(i,e,s) for (int i = e; i >= (int)s; --i) 
-using namespace std;
-using ll = long long;
-using ull = unsigned long long;
-using uint = unsigned int;
-using lll = __int128;
-const ll LINF = 1e18;
-const int INF = 0x3f3f3f3f;
-const int MOD = 1e9 + 7;
-const int MAXN = 4e3 + 5;
-int a[MAXN], c[MAXN], mx[MAXN];
-void cl(int a[]) {
-    rep(i, 1, MAXN-1) a[i] = 0;
-}
-int wei(int a[]) {
-    per(len, MAXN-1, 1) if (a[len] != 0) return len;
-    return 1;
-}
-void print(int a[]) {
-    int len = wei(a);
-    per(i, len, 1) cout << a[i];
-    cout << nl;
-}
-void mult(int b) {
-    cl(c);
-    rep(i, 1, MAXN-1) {
-        c[i] += b * a[i];
-        if (c[i] >= 10) {
-            c[i+1] += c[i] / 10;
-            c[i] %= 10;
+#ifdef LOCAL
+#include <debug.h>
+#else
+#define debug(...) 43
+#define debug_range(...) 43
+#endif
+using i64 = long long;
+using i128 = __int128;
+
+constexpr int N = 4000;
+struct BigInt {
+    int a[N];
+    BigInt(int x = 0) : a{} {
+        for (int i = 0; x; i++) {
+            a[i] = x % 10;
+            x /= 10;
         }
     }
-    rep(i, 1, MAXN-1) {
-        a[i] = c[i];
+    BigInt &operator*=(int x) {
+        for (int i = 0; i < N; i++) {
+            a[i] *= x;
+        }
+        for (int i = 0; i < N - 1; i++) {
+            a[i + 1] += a[i] / 10;
+            a[i] %= 10;
+        }
+        return *this;
     }
-}
-void div(int b) {
-    cl(c);
-    int la = wei(a);
-    int remainder = 0;
-    per(i, la, 1) {
-        int cur = remainder * 10 + a[i];
-        c[i] = cur / b;
-        remainder = cur % b;
+    BigInt &operator/=(int x) {
+        for (int i = N - 1; i >= 0; i--) {
+            if (i) {
+                a[i - 1] += a[i] % x * 10;
+            }
+            a[i] /= x;
+        }
+        return *this;
     }
-}
-bool les() {
-    int lc = wei(c);
-    int lmx = wei(mx);
-    if (lc != lmx) return lc > lmx;
-    per(i, lc, 1) if (c[i] != mx[i]) return c[i] > mx[i];
-    return false;
-}
-struct st {
-    int l, r;
-    bool operator<(const st& other) {
-        return l * r < other.l * other.r;
+    BigInt &operator+=(const BigInt &x) {
+        for (int i = 0; i < N; i++) {
+            a[i] += x.a[i];
+            if (a[i] >= 10) {
+                a[i + 1] += 1;
+                a[i] -= 10;
+            }
+        }
+        return *this;
     }
-}p[MAXN];
-void solve() {
-    int n; cin >> n;
-    rep(i, 1, n+1) cin >> p[i].l >> p[i].r;
-    sort(p + 2, p + 2 + n);
-    a[1] = 1;
-    mult(p[1].l);
-    rep(i, 2, n+1) {
-        div(p[i].r);
-        if (les()) {
-            rep(i, 1, MAXN-1) mx[i] = c[i];
-        } 
-        mult(p[i].l);
+    BigInt operator/(int x) const {
+        BigInt res = *this;
+        for (int i = N - 1; i >= 0; i--) {
+            if (i) {
+                res.a[i - 1] += res.a[i] % x * 10;
+            }
+            res.a[i] /= x;
+        }
+        return res;
     }
-    print(mx);
+    bool operator<(const BigInt &rhs) const {
+        for (int i = N - 1; i >= 0; i--) {
+            if (a[i] != rhs.a[i]) {
+                return a[i] < rhs.a[i];
+            }
+        }
+        return false;
+    }
+};
 
+std::ostream &operator<<(std::ostream &o, const BigInt &a) {
+    int t = N - 1;
+    while (t > 0 && a.a[t] == 0) {
+        t--;
+    }
+    for (int i = t; i >= 0; i--) {
+        o << a.a[i];
+    }
+    return o;
 }
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
     if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) solve();
+    #endif
+    int n;
+    std::cin >> n;
+    std::vector<std::pair<int, int>> a(n + 1);
+    for (int i = 0; i <= n; ++i) {
+        std::cin >> a[i].first >>  a[i].second;
+    }
+    std::sort(a.begin() + 1, a.end(), [](const std::pair<int, int>& lhs, const std::pair<int, int>& rhs){
+        return lhs.first * lhs.second < rhs.first * rhs.second;
+    });
+    BigInt p = a[0].first;
+    BigInt ans = 0;
+    for (int i = 1; i <= n; ++i) {
+        ans = std::max(ans, (p / a[i].second));
+        p *= a[i].first;
+    }
+    std::cout << ans << nl;
 }

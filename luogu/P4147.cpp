@@ -1,58 +1,54 @@
 #include <bits/stdc++.h>
-#include <stack>
-#ifdef LOCAL
-#include "basic/debug.h"
-#else
-#define debug(...) 42
-#endif
-using namespace std;
-using ll = long long;
-using ull = unsigned long long;
-using uint = unsigned int;
+#include <vector>
+using i64 = long long;
 using i128 = __int128;
-
-int n, m;
-const int MAXN = 1e3 + 1;
-ll dp[MAXN];
-stack<int> stk;
-ll ans = 0;
-void solve() {
-    cin >> n >> m;
-    for (int i = 1; i <= n; ++i){
-        for (int j = 1;j <= m; ++j){
-            char c;
-            cin >> c;
-            if (c == 'R') dp[j] = 0;
-            else dp[j] += 1;
-        }
-        for (int j = 1; j <= m; ++j){
-            while (!stk.empty() && dp[j] < dp[stk.top()]){
-                ll h = dp[stk.top()];
-                stk.pop();
-                int l = stk.empty() ? 0 : stk.top();
-                int r = j;
-                ans = max(ans, (r - 1 - l) * h);
-            }
-            stk.push(j);
-        }
-        while (!stk.empty()){
-            ans = max(ans, (m + 1 - stk.top()) * dp[stk.top()]);
-            stk.pop();
-        }
-    }
-    cout << 3 * ans;
-}
+#define nl "\n"
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
     if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) {
-        solve();
+    #endif
+    int n, m;
+    std::cin >> n >> m;
+    std::vector a(n, std::vector<int>(m));
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            char c;
+            std::cin >> c;
+            if (c == 'F') {
+                a[i][j] = 1;
+            }
+        }
     }
-    return 0;
+    std::vector<i64> h(m);
+    i64 ans = 0;
+    for (int i = 0; i < n; ++i) {
+        std::vector<int> stk;
+        for (int j = 0; j < m; ++j) {
+            if (a[i][j] == 0) {
+                h[j] = 0;
+            }else {
+                h[j]++;
+            }
+            while (!stk.empty() && h[stk.back()] >= h[j]) {
+                int idx = stk.back();
+                stk.pop_back();
+                int l = stk.empty() ? -1 : stk.back();
+                int r = j;
+                ans = std::max(ans, (h[idx] * (r - l - 1))); // [l + 1, r)
+            }
+            stk.push_back(j);
+        }
+        while (!stk.empty()) {
+            int idx = stk.back();
+            stk.pop_back();
+            int l = stk.empty() ? -1 : stk.back();
+            int r = m;
+            ans = std::max(ans, (h[idx] * (r - l - 1))); // [l + 1, r)
+        }
+    }
+    std::cout << 3 * ans << nl;
+
 }

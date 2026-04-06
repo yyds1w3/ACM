@@ -1,84 +1,75 @@
-// 拓展并查集size (2 * n)
-// u 本身 u+n 敌人的监狱
-// 如果uv有仇
-// u 应该和 v+n在一起
-// v 应该和 u+n在一起
-// 如果uu 和 u 有仇, 那么 uu 应该和u+n在一起, 此时uu和v在一起了
-// 假如uu 和 v 有仇, 那么 uu 应该和v+n在一起, 此时v和u就在一起了,(u和v+n在一起),就会有矛盾
-#include <algorithm>
 #include <bits/stdc++.h>
-#include <vector>
-using namespace std;
-typedef long long ll;
-
+#define nl "\n"
 #ifdef LOCAL
-#include "basic/debug.h"
+#include <debug.h>
 #else
-#define debug(...) 42
+#define debug(...) 43
+#define debug_range(...) 43
 #endif
-struct DSU{
-    vector<int> fa;
-    DSU(int n){
-        fa.resize(n + 1);
-        iota(fa.begin(), fa.end(), 0);
+using i64 = long long;
+using i128 = __int128;
+struct DSU {
+    std::vector<int> f, siz;
+    DSU() {}
+    DSU(int n) {
+        init(n);
     }
-    int find(int x){
-        return fa[x] == x ? x : fa[x] = find(fa[x]);
+    void init(int n) {
+        f.resize(n);
+        std::iota(f.begin(), f.end(), 0);
+        siz.assign(n, 1);
     }
-    void merge(int x, int y){
-        int rx = find(x);
-        int ry = find(y);
-        if (rx != ry) fa[rx] = ry;
+    int find(int x) {
+        if (f[x] == x) return x;
+        return f[x] = find(f[x]);
     }
-};
-struct crim{
-    int u, v, w;
-    bool operator<(const crim &other) const {return w > other.w;}
-};
-crim crims[100001];
-void solve() {
-    int n, m;
-    cin >> n >> m;
-    for (int i = 1; i <= m; ++i){
-        int u, v, w;
-        cin >> crims[i].u >> crims[i].v >> crims[i].w;
+    bool same(int x, int y) {
+        return find(x) == find(y);
     }
-    sort(crims + 1, crims + m + 1);
-    ll ans = 0;
-    DSU dsu(2 * n);
-    for (int i = 1; i <= m; ++i){
-        int u = crims[i].u;
-        int v = crims[i].v;
-        int w = crims[i].w;
-        if (dsu.find(u) == dsu.find(v)){
-            cout << w << '\n';
-            return;
+    bool merge(int x, int y) {
+        x = find(x);
+        y = find(y);
+        if (x == y) {
+            return false;
         }
-        dsu.merge(u, v + n);
-        dsu.merge(v, u + n);
+        siz[x] += siz[y];
+        f[y] = x;
+        return true;
     }
-    cout << "0\n";
-}
-
+    int size(int x) {
+        return siz[find(x)];
+    }
+};
+struct st {
+    int a, b, c;
+    bool operator<(const st& other) const {
+        return c > other.c;
+    }
+};
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
-    if (fopen("in.txt", "r")) {
-        freopen("in.txt", "r", stdin);
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+    #endif
+    int n, m;
+    std::cin >> n >> m;
+    DSU dsu(2 * n);
+    std::vector<st> v(m);
+    for (int i = 0; i < m; ++i) {
+        std::cin >> v[i].a >> v[i].b >> v[i].c;
+        v[i].a--, v[i].b--;
     }
-    auto _clock_start = chrono::high_resolution_clock::now();
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) {
-        solve();
+    std::sort(v.begin(), v.end());
+    for (int i = 0; i < m; ++i) {
+        auto [a, b, c] = v[i];
+        if (!dsu.same(a, b)) {
+            dsu.merge(a + n, b);
+            dsu.merge(b + n, a);
+        }else {
+            std::cout << c << nl;
+            return 0;
+        }
     }
-#ifdef LOCAL
-    auto _clock_end = chrono::high_resolution_clock::now();
-    cerr << "Run Time: " 
-         << chrono::duration_cast<chrono::milliseconds>(_clock_end - _clock_start).count() 
-         << " ms" << endl;
-#endif
-    return 0;
+    std::cout << 0 << nl;
 }

@@ -1,71 +1,55 @@
-
 #include <bits/stdc++.h>
+#define nl "\n"
 #ifdef LOCAL
-#include "basic/debug.h"
+#include <debug.h>
 #else
-#define debug(...) 42
+#define debug(...) 43
+#define debug_range(...) 43
 #endif
-using namespace std;
-using ll = long long;
-using ull = unsigned long long;
-using uint = unsigned int;
+using i64 = long long;
 using i128 = __int128;
 
-const int MOD = 9901;
-ll qpow(ll a, ll b){
-    ll res = 1;
+constexpr int MOD = 9901;
+i64 qpow(i64 a, i64 b) {
+    i64 res = 1;
     a %= MOD;
-    while(b){
+    while (b) {
         if (b & 1) res = res * a % MOD;
         a = a * a % MOD;
         b >>= 1;
     }
     return res;
 }
-ll inv(ll a){
+i64 inv(i64 a) {
+    a = (a % MOD + MOD) + MOD;
     return qpow(a, MOD - 2);
 }
-// 1 + p^1 + ... + p^n(共n+1项) == 1 * (1 - p^n) * inv(1 - p)
-ll sum_geometric(ll p, ll n){
-    if ((p - 1) % MOD == 0){
-        return (n + 1) % MOD;
-    }
-    return (((1 - qpow(p, n+1)) % MOD) + MOD) * (inv((1 - p) % MOD) + MOD) % MOD;
+i64 prod(i64 p, i64 e) {
+    p = (p % MOD + MOD) % MOD;
+    if (p == 1) return (e + 1) % MOD;
+    return ((1 - qpow(p, e + 1)) % MOD + MOD) * inv(1 - p) % MOD;
 }
-void solve() {
+int main() {
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+    #endif
     int a, b;
-    cin >> a >> b;
-    if (a == 0){cout << 0 << endl; return;}
-    if (a == 1){cout << 1 << endl; return;}
-    if (b == 0){cout << 1 << endl; return;}
-    ll ans = 1;
-    for (int i = 2; i * i <= a; ++i){
-        if (a % i == 0){
-            ll cnt = 0;
-            while (a % i == 0){
+    std::cin >> a >> b;
+    i64 ans = 1;
+    for (int i = 2; i * i <= a; ++i) {
+        if (a % i == 0) {
+            i64 cnt = 0;
+            while (a % i == 0) {
                 cnt++;
                 a /= i;
             }
-            ans = (ans * sum_geometric(i, cnt * b)) % MOD;
+            ans = ans * prod(i, cnt * b) % MOD;
         }
     }
-    debug(ans, a, b);
-    if (a > 1){
-        ans = ans * sum_geometric(a, b) % MOD;
+    if (a > 1) {
+        ans = ans * prod(a, b) % MOD;
     }
-    cout << ans << endl;
-}
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) {
-        solve();
-    }
-    return 0;
+    std::cout << ans << nl;
 }

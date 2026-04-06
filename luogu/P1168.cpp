@@ -1,45 +1,37 @@
 #include <bits/stdc++.h>
-#include <functional>
-#include <queue>
-#include <vector>
+#define nl "\n"
 #ifdef LOCAL
-#include "basic/debug.h"
+#include <debug.h>
 #else
-#define debug(...) 42
+#define debug(...) 43
+#define debug_range(...) 43
 #endif
-using namespace std;
-using ll = long long;
-using ull = unsigned long long;
-using uint = unsigned int;
+using i64 = long long;
 using i128 = __int128;
-priority_queue<int> qx;
-priority_queue<int, vector<int>, greater<int>> qn;
-int n;
-void solve() {
-    cin >> n;
-    for (int i = 1; i <= n; ++i) {
-        int a; cin >> a;
-        qx.push(a);
-        qn.push(qx.top());
-        qx.pop();
-        if (qn.size() > qx.size()) {
-            qx.push(qn.top());
-            qn.pop();
-        }
-        if (i % 2 == 1) cout << qx.top() << "\n";
-    }
-}
+
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
     if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) {
-        solve();
+    #endif
+    int n;
+    std::cin >> n;
+    std::priority_queue<int, std::vector<int>, std::greater<int>> mn;
+    std::priority_queue<int> mx;
+    for (int i = 0; i < n; ++i) {
+        int x;
+        std::cin >> x;
+        mx.push(x);
+        mn.push(mx.top());
+        mx.pop();
+        if (mx.size() < mn.size()) {
+            mx.push(mn.top());
+            mn.pop();
+        }
+        if (i % 2 == 0) {
+            std::cout << mx.top() << nl;
+        }
     }
-    return 0;
 }

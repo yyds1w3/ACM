@@ -1,84 +1,110 @@
-#include <iostream>
-using namespace std;
-
-typedef long long ll;
-const int N = 1e5 + 5;
-
-ll tree[N << 2];
-ll lazy[N << 2]; // 打上懒标记意味着该节点已经修改, 但是子节点没有, 懒标记只能下放
-ll a[N]; 
-int n,m,x,y,op;
-ll k;
-// 左孩子, 右孩子
-inline int ls(int p) {return p << 1;}
-inline int rs(int p) {return (p << 1) | 1;}
-// push_up是把子节点的tree加到父节点
-void push_up(int p){
-    tree[p] = tree[ls(p)] + tree[rs(p)];
-}
-// push_down下放懒标记, 使用时一定不是叶子节点
-void push_down(int p, int len){
-    if (lazy[p]){
-        // left
-        lazy[ls(p)] += lazy[p];
-        tree[ls(p)] += lazy[p] * (len - (len >> 1));
-        // right
-        lazy[rs(p)] += lazy[p];
-        tree[rs(p)] += lazy[p] * (len >> 1);
-        // p
-        lazy[p] = 0;
+#include <bits/stdc++.h>
+#include <ostream>
+using i64 = long long;
+using i128 = __int128;
+#define nl "\n"
+struct Info {
+    i64 val;
+    i64 len;
+    Info() : val(0), len(0) {}
+    Info(i64 _v, i64 _len) : val(_v), len(_len) {}
+    friend Info operator+(const Info& a, const Info& b) {
+        return Info(a.val + b.val, a.len + b.len);
     }
-}
-// p代表本节点, l, r代表管辖a[l ~ r]
-void build(int p, int l, int r){
-    if (l == r){
-        tree[p] = a[l];
-        return;
+    friend std::ostream& operator<<(std::ostream& os, const Info& rhs) {
+        return os << rhs.val;
     }
-    // 假设l = 1, r = 4, mid = 2
-    int mid = (l + r) >> 1;
-    build(ls(p), l, mid); // 1~2
-    build(rs(p), mid + 1, r); // 3~4
-    push_up(p); // 回溯更新父节点
-}
-// 区间修改[nl, nr] + k
-void update(int p, int l, int r, int nl, int nr, ll k){
-    if (nl <= l && r <= nr){
-        tree[p] += k * (r - l + 1);
-        lazy[p] += k;
-        return;
+};
+struct SegTree {
+    int n;
+    std::vector<i64> tag;
+    std::vector<Info> info;
+    SegTree(int _n) : n(_n), tag(4 * n), info(4 * n) {}
+    SegTree(const std::vector<i64>& init_vec) {
+        n = init_vec.size();
+        tag.assign(4 * n, 0);
+        info.resize(4 * n);
+        std::function<void(int, int, int)> build = [&] (int p, int l, int r) {
+            if (r - l == 1) {
+                info[p] = Info(init_vec[l], 1);
+                return;
+            }
+            int m = (l + r) / 2;
+            build(2 * p, l, m);
+            build(2 * p + 1, m, r);
+            pull(p);
+        };
+        build(1, 0, n);
     }
-    // 没有完全覆盖
-    push_down(p, r-l+1); // 下放懒标记
-    int mid = (l + r) >> 1; 
-    if (nl <= mid) update(ls(p), l, mid, nl, nr, k);
-    if (nr >  mid) update(rs(p), mid+1, r, nl, nr, k);
-    push_up(p); // 回溯更新父节点
-}
-ll query(int p, int l, int r, int nl, int nr){
-    if (nl <= l && r <= nr) return tree[p];
-    push_down(p, r-l+1);
-    int mid = (l + r) >> 1;
-    ll res = 0;
-    if (nl <= mid) res += query(ls(p), l, mid, nl, nr);
-    if (nr > mid) res += query(rs(p), mid+1, r, nl, nr);
-    // 没有push_up, 因为没有修改, 上方的数据是最新的且不用动
-    return res;
-}
-int main(){
-    cin >> n >> m;
-    for (int i = 1; i <= n; ++i){
-        cin >> a[i];
+    void pull(int p) {
+        info[p] = info[2 * p] + info[2 * p + 1];
     }
-    build(1, 1, n);
-    for (int i = 1; i <= m; ++i){
-        cin >> op;
-        if (op == 1){
-            cin >> x >> y >> k;
-            update(1, 1, n, x, y, k);
-        }else if (op == 2){
-            cin >> x >> y;
-            cout << query(1, 1, n, x, y) << '\n';
+    void add(int p, i64 v) {
+        tag[p] += v;
+        info[p].val += v * info[p].len;
+    }
+    void push(int p) {
+        if (tag[p]) {
+            add(2 * p, tag[p]);
+            add(2 * p + 1, tag[p]);
+            tag[p] = 0;
+        }
+    }
+    void rangeAdd(int p, int l, int r, int x, int y, i64 v) {
+        if (x <= l && y >= r) {
+            return add(p, v);
+        }
+        if (x >= r || y <= l) {
+            return;
+        }
+        int m = (l + r) / 2;
+        push(p);
+        rangeAdd(2 * p, l, m, x, y, v);
+        rangeAdd(2 * p + 1, m, r, x, y, v);
+        pull(p);
+    }
+    void rangeAdd(int x, int y, i64 v) {
+        rangeAdd(1, 0, n, x, y, v);
+    }
+    Info query(int p, int l, int r, int x, int y) {
+        if (x <= l && y >= r) {
+            return info[p];
+        }
+        if (x >= r || y <= l) {
+            return Info();
+        }
+        int m = (l + r) / 2;
+        push(p);
+        return query(2 * p, l, m, x, y) + query(2 * p + 1, m, r, x, y);
+    }
+    Info query(int x, int y) {
+        return query(1, 0, n, x, y);
+    }
+};
+int main() {
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+    #endif
+    int n, m;
+    std::cin >> n >> m;
+    std::vector<i64> a(n);
+    for (int i = 0; i < n; ++i) {
+        std::cin >> a[i];
+    }
+    SegTree seg(a);
+    for (int i = 0; i < m; ++i) {
+        int op;
+        std::cin >> op;
+        if (op == 1) {
+            i64 x, y, k;
+            std::cin >> x >> y >> k;
+            seg.rangeAdd(x - 1, y, k);
+        }else if (op == 2) {
+            int x, y;
+            std::cin >> x >> y;
+            std::cout << seg.query(x - 1, y) << nl;
         }
     }
 }

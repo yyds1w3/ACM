@@ -1,34 +1,39 @@
 #include <bits/stdc++.h>
-#include <vector>
-using namespace std;
-using ll = long long;
-using i128 = __int128;
 #define nl "\n"
-#define debug(x) cerr << x << endl
-const int MAXY = 3e6 + 1;
-vector<int> straw[MAXY];
-int dp[MAXY];
+#ifdef LOCAL
+#include <debug.h>
+#else
+#define debug(...) 43
+#define debug_range(...) 43
+#endif
+using i64 = long long;
+using i128 = __int128;
+
 int main() {
-    ios::sync_with_stdio(false); cin.tie(0); cout.tie(0);
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
     #ifdef LOCAL
     if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
     #endif
-    int N; cin >> N;
+    int n;
+    std::cin >> n;
     int mxY = 0;
-    for (int i = 1; i <= N; ++i) {
-        int x, y; cin >> x >> y;
+    std::vector straws(3000002, std::vector<int>());
+    for (int i = 1; i <= n; ++i) {
+        int x, y;
+        std::cin >> x >> y;
         x++, y++;
-        straw[y].push_back(x);
-        mxY = max(mxY, y);
+        mxY = std::max(mxY, y);
+        straws[y].push_back(x);
     }
+    std::vector<int> dp(mxY + 1);
     for (int i = 1; i <= mxY; ++i) {
-        dp[i] = dp[i-1];
-        for (int s : straw[i]) {
-             dp[i] = max(dp[i], dp[s-1] + i - s + 1);
+        dp[i] = dp[i - 1];
+        for (auto x : straws[i]) {
+            dp[i] = std::max(dp[i], dp[x - 1] + i - x + 1);
         }
     }
-    cout << dp[mxY] << nl;
-
-
+    std::cout << dp[mxY] << nl;
+    
 
 }

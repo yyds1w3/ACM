@@ -1,30 +1,51 @@
-#include <iostream>
-#include <vector>
-using namespace std;
-const int N = 5e6 + 1;
-int a[N], n, k;
-void qselect(int l, int r, int k){
-    if (l >= r) return;
-    int x = a[(l + r) / 2]; // pivot
-    int i = l, j = r;
-    while (i <= j){
-        while(a[i] < x) i++; 
-        while(a[j] > x) j--; 
-        if (i <= j){
-            swap(a[i], a[j]); // 将违规的值交换
-            i++, j--;
+#include <bits/stdc++.h>
+#define nl "\n"
+#ifdef LOCAL
+#include <debug.h>
+#else
+#define debug(...) 43
+#define debug_range(...) 43
+#endif
+using i64 = long long;
+using i128 = __int128;
+
+
+int main() {
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+    #endif
+    int n, k;
+    std::cin >> n >> k;
+    std::vector<int> a(n);
+    for (int i = 0; i < n; ++i) {
+        std::cin >> a[i];
+    }
+    auto f = [&] (auto self, int l, int r) -> void {
+        if (r - l == 1) {
+            return;
         }
-    }
-    if (k <= j) qselect(l, j, k); // 递归左边
-    else if (k >= i) qselect(i, r, k); // 递归右边
-}
-int main(){
-    ios::sync_with_stdio(false);
-    cin.tie(0);
-    cin >> n >> k;
-    for (int i = 0; i < n; ++i){
-        cin >> a[i];
-    }
-    qselect(0, n - 1, k);
-    cout << a[k];
+        int mid = (l + r) / 2;
+        self(self, l, mid);
+        self(self, mid, r);
+        int i = l, j = mid, k = 0;
+        std::vector<int> temp(r - l);
+        while (i < mid && j < r) {
+            if (a[i] < a[j]) {
+                temp[k++] = a[i++];
+            }else temp[k++] = a[j++];
+        }
+        while (i < mid) {
+            temp[k++] = a[i++];
+        }
+        while (j < r) {
+            temp[k++] = a[j++];
+        }
+        for (int p = 0; p < r - l; ++p) {
+            a[l + p] = temp[p];
+        }
+    };
+    f(f, 0, n);
+    std::cout << a[k] << nl;
 }

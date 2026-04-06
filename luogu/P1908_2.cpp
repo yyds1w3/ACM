@@ -1,51 +1,53 @@
 #include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-using i128 = __int128;
 #define nl "\n"
-#define debug(x) cerr << x << endl
-const int MAXN = 5e5 + 1;
-ll arr[MAXN], help[MAXN];
-ll merge(int l, int m, int r) {
-    ll ans = 0;
-    for (int i = m, j = r; i >=l; i--) {
-        while (j >= m + 1 && arr[i] <= arr[j]) {
-            j--;
-        }
-        ans += j - m;
-    }
-    int i = l;
-    int a = l;
-    int b = m + 1;
-    while (a <= m && b <= r) {
-        help[i++] = arr[a] <= arr[b] ? arr[a++] : arr[b++];
-    }
-    while (a <= m) {
-        help[i++] = arr[a++];
-    }
-    while (b <= r) {
-        help[i++] = arr[b++];
-    }
-    for (int i = l; i <= r; ++i) {
-        arr[i] = help[i];
-    }
-    return ans;
-     
-}
-ll f(int l, int r) {
-    if (l == r) return 0;
-    int m = (l + r) / 2;
-    return f(l, m) + f(m + 1, r) + merge(l, m, r);
-    
-}
+#ifdef LOCAL
+#include <debug.h>
+#else
+#define debug(...) 43
+#define debug_range(...) 43
+#endif
+using i64 = long long;
+using i128 = __int128;
+
+
 int main() {
-    cin.tie(nullptr)->sync_with_stdio(false);
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
     #ifdef LOCAL
     if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
     #endif
-    int n; cin >> n;
-    for (int i = 1; i <= n; ++i) {
-        cin >> arr[i];
+    int n;
+    std::cin >> n;
+    std::vector<int> a(n);
+    for (int i = 0; i < n; ++i) {
+        std::cin >> a[i];
     }
-    cout << f(1, n) << nl;
+    auto f = [&] (auto self, int l, int r) -> i64 {
+        if (r - l == 1) {
+            return 0;
+        }
+        int mid = (l + r) / 2;
+        i64 ans = self(self, l, mid) + self(self, mid, r);
+        std::vector<int> temp(r - l);
+        int i = l, j = mid, k = 0;
+        while (i < mid && j < r) {
+            if (a[i] <= a[j]) {
+                temp[k++] = a[i++];
+            }else {
+                ans += mid - i;
+                temp[k++] = a[j++];
+            }
+        }
+        while (i < mid) {
+            temp[k++] = a[i++];
+        }
+        while (j < r) {
+            temp[k++] = a[j++];
+        }
+        for (int p = 0; p < k; ++p) {
+            a[p + l] = temp[p];
+        }
+        return ans;
+    };
+    std::cout << f(f, 0, n) << nl;
 }

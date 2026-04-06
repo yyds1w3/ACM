@@ -29,9 +29,9 @@ void dji(int s) {
     priority_queue<Edge> pq;
     pq.push({s, 0});
     while (!pq.empty()) {
-        auto [u, w] = pq.top();
+        auto [u, d] = pq.top();
         pq.pop();
-        if (dist[u] < w) continue;
+        if (dist[u] < d) continue;
         for (auto [v, w] : adj[u]) {
             if (w + dist[u] < dist[v]) {
                 dist[v] = dist[u] + w;
