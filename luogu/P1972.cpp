@@ -1,79 +1,80 @@
 #include <bits/stdc++.h>
-#include <vector>
-using namespace std;
-using ll = long long;
-using i128 = __int128;
 #define nl "\n"
-#define debug(x) cerr << x << endl
-template <typename T>
-struct BIT {
-    int n;
-    std::vector<T> a;
-    
-    BIT(int n_ = 0) {
-        init(n_);
-    }
-    
-    void init(int n_) {
-        n = n_;
-        a.assign(n + 1, T{});
-    }
-    
-    void add(int x, const T &v) {
-        for (int i = x; i <= n; i += i & -i) {
-            a[i] = a[i] + v;
-        }
-    }
-    
-    T sum(int x) {
-        T ans{};
-        for (int i = x; i >= 1; i -= i & -i) {
-            ans = ans + a[i];
-        }
-        return ans;
-    }
-    
-    T rangeSum(int l, int r) {
-        return sum(r) - sum(l-1);
+#ifdef LOCAL
+#include <debug.h>
+#else
+#define debug(...) 43
+#define debug_range(...) 43
+#endif
+using i64 = long long;
+using i128 = __int128;
+
+struct query {
+    int l, r, id;
+    friend std::ostream& operator<<(std::ostream& os, const query& rhs){
+        return (os << rhs.l << " " << rhs.r << " " << rhs.id);
     }
 };
-const int MAXN = 1e6 + 1;
-struct qu {
-    int l, r, id;
-    bool operator<(const qu& other) const {return r < other.r;}
-}q[MAXN];
-int pos[MAXN], arr[MAXN];
+struct Fenwick {
+    int n;
+    std::vector<int> treeA;
+    Fenwick(int n_ = 0) : n(n_) {
+        treeA.assign(n + 1, 0);
+    }
+    void add(int pos, int val) {
+        for (int i = pos + 1; i <= n; i += i & -i) {
+            treeA[i] += val;
+        }
+    }
+    int query(int pos) {
+        int res = 0;
+        for (int i = pos; i > 0; i -= i & -i) {
+            res += treeA[i];
+        }
+        return res;
+    }
+};
 int main() {
-    cin.tie(nullptr)->sync_with_stdio(false);
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
     #ifdef LOCAL
     if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
     #endif
-    int n; cin >> n;
-    BIT<int> bit(n);
-    for (int i = 1; i <= n; ++i) {
-        cin >> arr[i]; 
+    int n;
+    std::cin >> n;
+    std::vector<int> a(n);
+    for (int i = 0; i < n; ++i) {
+        std::cin >> a[i];
     }
-    int m; cin >> m;
-    for (int i = 1; i <= m; ++i) {
-        cin >> q[i].l >> q[i].r;
+    int m;
+    std::cin >> m;
+    std::vector<query> q(m);
+    for (int i = 0; i < m; ++i)  {
+        std::cin >> q[i].l >> q[i].r;
         q[i].id = i;
     }
-    sort(q + 1, q + 1 + m);
-    vector<int> ans(m + 1);
-    for (int s = 1, i = 1; i <= m; ++i) {
-        int r = q[i].r;
-        while (s <= r) {
-            int col = arr[s];
-            if (pos[col] != 0) {
-                bit.add(pos[col], -1);
+    std::sort(q.begin(), q.end(), [](const query& lhs, const query& rhs){
+        return lhs.r < rhs.r;
+    });
+    std::map<int, int> pos;
+    int idx = 0;
+    Fenwick bit(n);
+    std::vector<int> ans(m);
+    for (int i = 0; i < m; ++i) {
+        auto [l, r, id] = q[i];
+        l--;
+        while (idx < r) {
+            auto it = pos.find(a[idx]);
+            if (it != pos.end()) {
+                bit.add(it->second, -1);
             }
-            pos[col] = s;
-            bit.add(pos[col], 1);
-            s++;
+            bit.add(idx, 1);
+            pos[a[idx]] = idx;
+            idx++;
         }
-        int l = q[i].l;
-        int id = q[i].id;
-        ans[id] = bit.rangeSum(l, r);
+        ans[id] = bit.query(r) - bit.query(l);
     }
-    for (int i = 1; i <= m; ++i) cout << ans[i] << nl;
+    for (int i = 0; i < m; ++i) {
+        std::cout << ans[i] << nl;
+    }
 }

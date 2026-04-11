@@ -14,6 +14,7 @@ int main() {
     std::ios::sync_with_stdio(false); 
     std::cin.tie(nullptr);
     #ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+    freopen("in.txt", "r", stdin);
+    freopen("sout.txt", "w", stdout);
     #endif
 }

@@ -1,97 +1,80 @@
 #include <bits/stdc++.h>
+
 using i64 = long long;
+// 区间加法 + 区间查询
+
 struct Info {
-    i64 val;
+    i64 sum;
     i64 len;
-    Info() : val(0), len(0) {}
-    Info(i64 _v, i64 _len) : val(_v), len(_len) {}
-    friend Info operator+(const Info& a, const Info& b) {
-        return Info(a.val + b.val, a.len + b.len);
-    }
-    friend std::ostream& operator<<(std::ostream& os, const Info& rhs) {
-        return os << rhs.val;
+
+    Info(i64 sum_ = 0, i64 len_ = 0) : sum(sum_), len(len_) {}
+    Info operator+(const Info& other) const {
+        return Info(sum + other.sum, len + other.len);
     }
 };
-struct SegTree {
+struct Tag {
+    i64 add;
+
+    Tag(i64 add_ = 0) : add(add_) {}
+};
+struct SegmentTree {
     int n;
-    std::vector<i64> tag;
-    std::vector<Info> info;
-    SegTree(int _n) : n(_n), tag(4 * n), info(4 * n) {}
-    SegTree(const std::vector<i64>& init_vec) {
-        n = init_vec.size();
-        tag.assign(4 * n, 0);
-        info.resize(4 * n);
-        auto build = [&] (auto& self, int p, int l, int r) {
-            if (r - l == 1) {
-                info[p] = Info(init_vec[l], 1);
-                return;
-            }
-            int m = (l + r) / 2;
-            self(self, 2 * p, l, m);
-            self(self, 2 * p + 1, m, r);
-            pull(p);
-        };
-        build(build, 1, 0, n);
-    }
+    std::vector<Info> treeA;
+    std::vector<Tag> tag;
+
+    SegmentTree(int n_ = 0) : n(n_), treeA(4 * n), tag(4 * n) {}
     void pull(int p) {
-        info[p] = info[2 * p] + info[2 * p + 1];
+        treeA[p] =  treeA[2 * p] + treeA[2 * p + 1];
     }
-    void add(int p, i64 v) {
-        tag[p] += v;
-        info[p].val += v * info[p].len;
+    void apply(int p, const Tag& v) {
+        treeA[p].sum += v.add * treeA[p].len;
+        tag[p].add += v.add;
     }
     void push(int p) {
-        if (tag[p]) {
-            add(2 * p, tag[p]);
-            add(2 * p + 1, tag[p]);
-            tag[p] = 0;
+        if (tag[p].add != 0) {
+            apply(2 * p, tag[p]);
+            apply(2 * p + 1, tag[p]);
+            tag[p] = Tag();
         }
     }
-    void rangeAdd(int p, int l, int r, int x, int y, i64 v) {
-        if (x <= l && y >= r) {
-            return add(p, v);
-        }
-        if (x >= r || y <= l) {
-            return;
-        }
-        int m = (l + r) / 2;
-        push(p);
-        rangeAdd(2 * p, l, m, x, y, v);
-        rangeAdd(2 * p + 1, m, r, x, y, v);
-        pull(p);
-    }
-    void rangeAdd(int x, int y, i64 v) {
-        rangeAdd(1, 0, n, x, y, v);
-    }
-    Info query(int p, int l, int r, int x, int y) {
-        if (x <= l && y >= r) {
-            return info[p];
-        }
-        if (x >= r || y <= l) {
-            return Info();
-        }
-        int m = (l + r) / 2;
-        push(p);
-        return query(2 * p, l, m, x, y) + query(2 * p + 1, m, r, x, y);
-    }
-    Info query(int x, int y) {
-        return query(1, 0, n, x, y);
-    }
-    void modify(int p, int l, int r, int x, const Info& v) {
+    void build(int p, int l, int r, std::vector<i64>& a) {
         if (r - l == 1) {
-            info[p] = v; 
+            treeA[p] = Info(a[l], 1);
             return;
         }
-        int m = (l + r) / 2;
-        push(p);
-        if (x < m) {
-            modify(2 * p, l, m, x, v);
-        }else {
-            modify(2 * p + 1, m, r, x, v);
-        }
+        int mid = (l + r) / 2;
+        build(2 * p, l, mid, a);
+        build(2 * p + 1, mid, r, a);
         pull(p);
     }
-    void modify(int x, const Info& v) {
-        modify(1, 0, n, x, v);
+    void build(std::vector<i64>& a) {
+        build(1, 0, n, a);
+    }
+    void add(int p, int l, int r, int ql, int qr, const Tag& v) {
+        if (qr <= l || ql >= r) return;
+        if (ql <= l && r <= qr) {
+            apply(p, v);
+            return;
+        }
+        push(p);
+        int mid = (l + r) / 2;
+        add(2 * p, l, mid, ql, qr, v);
+        add(2 * p + 1, mid, r, ql, qr, v);
+        pull(p);
+    }
+    void add(int ql, int qr, const Tag& v) {
+        add(1, 0, n, ql, qr, v);
+    }
+    Info query(int p, int l, int r, int ql, int qr) {
+        if (qr <= l || ql >= r) return Info();
+        if (ql <= l && r <= qr) {
+            return treeA[p];
+        }
+        push(p);
+        int mid = (l + r) / 2;
+        return query(2 * p, l, mid, ql, qr) + query(2 * p + 1, mid, r, ql, qr);
+    }
+    Info query(int ql, int qr) {
+        return query(1, 0, n, ql, qr);
     }
 };

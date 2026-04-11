@@ -1,38 +1,47 @@
-#include <iostream>
-#include <vector>
-#include <queue>
-using namespace std;
-const int N = 105;
-int n;
-vector<int> adj[N];
-int in[N];
-vector<int> ans;
-queue<int> q;
-int main(){
-    cin >> n;
-    for (int u = 1; u <= n; ++u){
-        int v;
-        while(cin >> v && v != 0){
-            adj[u].push_back(v);
-            in[v]++;
+#include <bits/stdc++.h>
+#define nl "\n"
+#ifdef LOCAL
+#include <debug.h>
+#else
+#define debug(...) 43
+#define debug_range(...) 43
+#endif
+using i64 = long long;
+using i128 = __int128;
+
+
+int main() {
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
+    freopen("in.txt", "r", stdin);
+    #endif
+    int n;
+    std::cin >> n;
+    std::vector<int> in(n);
+    std::vector<std::vector<int>> adj(n);
+    for (int i = 0; i < n; ++i) {
+        int u;
+        while (std::cin >> u) {
+            if (u == 0) break;
+            u--;
+            in[u]++;
+            adj[i].push_back(u);
         }
     }
-    for (int i = 1; i <= n; ++i){
-        if (in[i] == 0){
+    std::queue<int> q;
+    for (int i = 0; i < n; ++i) {
+        if (in[i] == 0) {
             q.push(i);
         }
     }
-    while (!q.empty()){
+    while (!q.empty()) {
         int u = q.front();
         q.pop();
-        ans.push_back(u);
-        for (int v : adj[u]){
+        std::cout << u + 1 << " ";
+        for (int v : adj[u]) {
             in[v]--;
-            if (in[v] == 0){
-                q.push(v);
-            }
+            if (in[v] == 0) q.push(v);
         }
     }
-    for (int a : ans) cout << a << " ";
-    
 }

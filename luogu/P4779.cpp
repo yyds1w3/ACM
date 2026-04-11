@@ -1,62 +1,53 @@
 #include <bits/stdc++.h>
-#include <cstring>
-#include <queue>
-#include <vector>
-#ifdef LOCAL
-#include "basic/debug.h"
-#else
-#define debug(...) 42
-#endif
-using ll = long long;
-using lll = __int128;
-using namespace std;
 #define nl "\n"
-#define rep(i,s,e) for (ll i = s; i <= (e); ++i)
-#define per(i,e,s) for (ll i = e; i >= (s); --i) 
-const ll LINF = 1e18;
-const int INF = 0x3f3f3f3f;
-const int MOD = 1e9 + 7;
-const int MAXN = 2e5 + 5;
-struct Edge {
-    ll to, w;
-    bool operator<(const Edge& other) const {return w > other.w;}
+#ifdef LOCAL
+#include <debug.h>
+#else
+#define debug(...) 43
+#define debug_range(...) 43
+#endif
+using i64 = long long;
+using i128 = __int128;
+
+struct Point {
+    int u;
+    i64 d;
+    bool operator<(const Point& other) const {
+        return d > other.d;
+    }
 };
-vector<Edge> adj[MAXN];
-ll dist[MAXN];
-void dji(int s) {
-    memset(dist, 0x3f, sizeof(dist));
+int main() {
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
+    freopen("in.txt", "r", stdin);
+    #endif
+    int n, m, s;
+    std::cin >> n >> m >> s;
+    s--;
+    std::vector<std::vector<std::pair<int,int>>> adj(n);
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        std::cin >> u >> v >> w;
+        u--, v--;
+        adj[u].push_back({v, w});
+    }
+    std::vector<i64> dist(n, 2e18);
     dist[s] = 0;
-    priority_queue<Edge> pq;
+    std::priority_queue<Point> pq;
     pq.push({s, 0});
     while (!pq.empty()) {
-        auto [u, w] = pq.top();
+        auto [u, d] = pq.top();
         pq.pop();
-        if (dist[u] < w) continue;
+        if (dist[u] < d) continue;
         for (auto [v, w] : adj[u]) {
-            if (w + dist[u] < dist[v]) {
+            if (dist[u] + w < dist[v]) {
                 dist[v] = dist[u] + w;
                 pq.push({v, dist[v]});
             }
         }
     }
-}
-void solve() {
-    int n, m, s; cin >> n >> m >> s;
-    rep(i, 1, m) {
-        int u, v, w; cin >> u >> v >> w;
-        adj[u].push_back({v, w});
+    for (int i = 0; i < n; ++i) {
+        std::cout << dist[i] << " ";
     }
-    dji(s);
-    rep(i, 1, n) cout << dist[i] << " ";
-}
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) solve();
 }

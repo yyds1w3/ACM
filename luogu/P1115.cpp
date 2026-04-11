@@ -1,3 +1,4 @@
+//2026-04-09 21:09:40
 #include <bits/stdc++.h>
 #define nl "\n"
 #ifdef LOCAL
@@ -14,17 +15,24 @@ int main() {
     std::ios::sync_with_stdio(false); 
     std::cin.tie(nullptr);
     #ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+    freopen("in.txt", "r", stdin);
     #endif
     int n;
     std::cin >> n;
-    int dp = 0;
-    int mx = -1e9;
+    std::vector<int> a(n);
     for (int i = 0; i < n; ++i) {
-        int a;
-        std::cin >> a;
-        dp = std::max(dp + a, a);
+        std::cin >> a[i];
+    }
+    int mx = 0;
+    int dp = 0;
+    for (int i = 0; i < n; ++i) {
+        dp = std::max(0, dp + a[i]);
         mx = std::max(mx, dp);
     }
-    std::cout << mx << nl;
+    int mx_v = *std::max_element(a.begin(), a.end());
+    if (mx_v < 0) {
+        std::cout << mx_v << nl;
+    }else {
+        std::cout << mx << nl;
+    }
 }

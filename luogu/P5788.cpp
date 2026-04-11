@@ -1,3 +1,4 @@
+//2026-04-09 20:53:48
 #include <bits/stdc++.h>
 #define nl "\n"
 #ifdef LOCAL
@@ -14,7 +15,7 @@ int main() {
     std::ios::sync_with_stdio(false); 
     std::cin.tie(nullptr);
     #ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+    freopen("in.txt", "r", stdin);
     #endif
     int n;
     std::cin >> n;
@@ -22,17 +23,18 @@ int main() {
     for (int i = 0; i < n; ++i) {
         std::cin >> a[i];
     }
-    std::vector<int> stk(n);
-    std::vector<int> ans(n);
+
+    std::vector<int> st(n);
+    std::vector<int> ans(n, -1);
     int top = -1;
     for (int i = 0; i < n; ++i) {
-        while (top >= 0 && a[stk[top]] < a[i]) {
-            ans[stk[top]] = i + 1;
+        while (top >= 0 && a[st[top]] < a[i]) {
+            ans[st[top]] = i;
             top--;
         }
-        stk[++top] = i;
+        st[++top] = i;
     }
     for (int i = 0; i < n; ++i) {
-        std::cout << ans[i] << " ";
+        std::cout << ans[i] + 1 << " ";
     }
 }

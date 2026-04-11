@@ -1,68 +1,71 @@
+// 2026-04-07 20:46
 #include <bits/stdc++.h>
-#include <vector>
-#ifdef LOCAL
-#include "basic/debug.h"
-#else
-#define debug(...) 42
-#endif
-using ll = long long;
-using lll = __int128;
-using namespace std;
 #define nl "\n"
-#define rep(i,s,e) for (ll i = s; i <= (e); ++i)
-#define per(i,e,s) for (ll i = e; i >= (s); --i) 
-const ll LINF = 1e18;
-const int INF = 0x3f3f3f3f;
-const int MOD = 1e9 + 7;
-const int MAXN = 5e5 + 5;
-const int LOG = 20;
-vector<int> adj[MAXN];
-int dep[MAXN];
-int fa[MAXN][LOG + 1];
-void dfs(int u, int f) {
-    dep[u] = dep[f] + 1;
-    fa[u][0] = f;
-    rep(i, 1, 20) fa[u][i] = fa[fa[u][i-1]][i-1];
-    for (int v : adj[u]) {
-        if (v == f) continue;
-        dfs(v, u);
-    }
-}
-int lca(int u, int v) {
-    if (dep[u] < dep[v]) swap(u, v);
-    per(i, LOG, 0) {
-        if (dep[fa[u][i]] >= dep[v]) u = fa[u][i];
-    }
-    if (u == v) return u;
-    per(i, LOG, 0) {
-        if (fa[u][i] != fa[v][i]) {
-            u = fa[u][i];
-            v = fa[v][i];
-        }
-    }
-    return fa[u][0];
-}
-void solve() {
-    int n, m, s; cin >> n >> m >> s;
-    rep(i, 1, n-1) {
-        int u, v; cin >> u >> v;
+#ifdef LOCAL
+#include <debug.h>
+#else
+#define debug(...) 43
+#define debug_range(...) 43
+#endif
+using i64 = long long;
+using i128 = __int128;
+
+int main() {
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
+    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+    #endif
+    int n, m, s;
+    std::cin >> n >> m >> s;
+    s--;
+    std::vector<std::vector<int>> adj(n);
+    for (int i = 0; i < n - 1; ++i) {
+        int u, v;
+        std::cin >> u >> v;
+        u--, v--;
         adj[u].push_back(v);
         adj[v].push_back(u);
     }
-    dfs(s, 0);
-    rep(i, 1, m) {
-        int u, v; cin >> u >> v;
-        cout << lca(u, v) << nl;
-    }
-}
+    std::vector<int> depth(n);
+    std::vector<std::vector<int>> f(n, std::vector<int>(20, s));
+    auto dfs = [&](auto self, int fa, int u) -> void {
+        for (int v : adj[u]) {
+            if (v == fa) continue;
+            depth[v] = depth[u] + 1;
+            f[v][0] = u;
+            for (int k = 1; k < 20; ++k) {
+                f[v][k] = f[f[v][k - 1]][k - 1];
+            }
+            self(self, u, v);
+        }
+    };
+    dfs(dfs, s, s);
 
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) solve();
+    auto lca = [&](int u, int v) -> int {
+        if (depth[u] < depth[v]) {
+            std::swap(u, v);
+        }
+        for (int k = 19; k >= 0; k--) {
+            if (depth[f[u][k]] >= depth[v]) {
+                u = f[u][k];
+            }
+        }
+        if (u == v) {
+            return u;
+        }
+        for (int k = 19; k >= 0; k--) {
+            if (f[u][k] != f[v][k]) {
+                u = f[u][k];
+                v = f[v][k];
+            }
+        }
+        return f[u][0];
+    };
+    for (int i = 0; i < m; ++i) {
+        int u, v;
+        std::cin >> u >> v;
+        u--, v--;
+        std::cout << lca(u, v) + 1 << nl;
+    }
 }
