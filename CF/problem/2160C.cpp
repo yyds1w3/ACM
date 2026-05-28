@@ -1,37 +1,51 @@
+//Mon May  4 08:08:33 PM CST 2026
 #include <bits/stdc++.h>
-using namespace std;
-typedef long long ll;
+#define nl "\n"
+#ifdef LOCAL
+#include <debug.h>
+#else
+#define debug(...) 43
+#define debug_range(...) 43
+#endif
+using i64 = long long;
+using i128 = __int128;
 
-#define IOS ios::sync_with_stdio(false); cin.tie(0); cout.tie(0);
-#define Open(s) freopen(s ".in", "r", stdin); freopen(s ".out", "w", stdout);
-
-void solve(){
-    int x;
-    cin >> x;
-    if (x == 0) cout << "YES" << '\n';
-    else{
-        int bit = 0;
-        int mp[32] = {0};
-        int start = 0;
-        bool flag = 1;
-        while (x){
-            bit++;
-            mp[bit] = x&1;
-            if (mp[bit] != 1 && flag) start++;
-            else flag = 0;
-            x >>= 1;
-        }
-        if ((bit - start) &1 == 1 && mp[(bit + start + 1) / 2] == 1) {cout << "NO" << '\n'; return;}
-        for (int i = start+1; i <= (bit + start + 1) / 2; ++i){ // a[mid] == a[mid] is alway true
-            if (mp[i] != mp[bit + start - i + 1] ) {cout << "NO" << '\n'; return; }
-        }
-        cout << "YES" << "\n";  
+void solve() {
+    int n;
+    std::cin >> n;
+    if (n == 0) {
+        std::cout << "YES" << nl;
+        return;
     }
+    int x = 31 - __builtin_clz(n);
+    int y = __builtin_ctz(n);
+    x -= y;
+    n >>= y;
+    for (int i = 0; i <= x / 2; ++i) {
+        if (((n >> i) & 1) != ((n >> (x - i)) & 1)) {
+            std::cout << "NO" << nl;
+            return;
+        }
+    }
+    if (x % 2 == 0) {
+        if ((n >> (x / 2)) & 1) {
+            std::cout << "NO" << nl;
+            return;
+        } 
+    }
+    std::cout << "YES" << nl;
 }
+
 int main() {
-    IOS;
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
+    freopen("in.txt", "r", stdin);
+    freopen("sout.txt", "w", stdout);
+    #endif
     int t;
-    cin >> t;
-    while (t--) solve();
-    return 0;
+    std::cin >> t;
+    while (t--) {
+        solve();
+    }
 }

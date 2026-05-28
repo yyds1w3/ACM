@@ -17,6 +17,12 @@ struct Fenwick {
             treeA[i] += val;
         }
     }
+    void update(int pos, int val) {
+        int x = val - query(pos, pos + 1);
+        for (int i = pos + 1; i <= n; i += i & -i) {
+            treeA[i] += x;
+        }
+    }
     // sum(pos) == S[0, pos)
     i64 sum(int pos) {
         i64 res = 0;

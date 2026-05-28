@@ -1,66 +1,57 @@
+//Wed Apr 22 08:15:10 PM CST 2026
 #include <bits/stdc++.h>
-#include <queue>
-#include <vector>
-#ifdef LOCAL
-#include "basic/debug.h"
-#else
-#define debug(...) 42
-#endif
-using ll = long long;
-using lll = __int128;
-using namespace std;
 #define nl "\n"
-#define rep(i,s,e) for (ll i = s; i <= (e); ++i)
-#define per(i,e,s) for (ll i = e; i >= (s); --i) 
-const ll LINF = 1e18;
-const int INF = 0x3f3f3f3f;
-const int MOD = 1e5 + 3;
-const int MAXN = 1e6 + 5;
-vector<int> adj[MAXN];
-int dist[MAXN];
-int cnt[MAXN];
-int n, m;
-void bfs() {
-    rep(i, 1, n) {
-        dist[i] = INF;
-        cnt[i] = 0;
+#ifdef LOCAL
+#include <debug.h>
+#else
+#define debug(...) 43
+#define debug_range(...) 43
+#endif
+using i64 = long long;
+using i128 = __int128;
+const int INF = 1e9;
+const int MOD = 100003;
+
+
+int main() {
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
+    freopen("in.txt", "r", stdin);
+    freopen("sout.txt", "w", stdout);
+    #endif
+    int n, m;
+    std::cin >> n >> m;
+    std::vector<std::vector<int>> adj(n);
+    for (int i = 0; i < m; ++i) {
+        int u, v;
+        std::cin >> u >> v;
+        u--, v--;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
-    dist[1] = 0;
-    cnt[1] = 1;
-    queue<int> q;
-    q.push(1);
+    std::vector<int> dist(n, INF);
+    std::vector<int> dp(n);
+    std::queue<int> q;
+    q.push(0);
+    dp[0] = 1;
+    dist[0] = 0;
     while (!q.empty()) {
         int u = q.front();
         q.pop();
         for (int v : adj[u]) {
-            if (dist[v] == INF) {
+            if (dist[u] + 1 < dist[v]) {
                 dist[v] = dist[u] + 1;
-                cnt[v] = cnt[u];
+                dp[v] = dp[u];
                 q.push(v);
-            }else if (dist[v] == dist[u] + 1) {
-                cnt[v] = (cnt[u] + cnt[v]) % MOD;
+            }else if (dist[u] + 1 == dist[v]) {
+                dp[v] = (dp[v] + dp[u]) % MOD;
+                // 不入队 // 为什么?
             }
         }
     }
-}
-void solve() {
-    cin >> n >> m;
-    rep(i, 1, m) {
-        int u, v; cin >> u >> v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
+    for (int i = 0; i < n; ++i) {
+        std::cout << dp[i] << nl;
     }
-    bfs();
-    rep(i, 1, n) cout << cnt[i] % MOD << nl;
-}
 
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) solve();
 }

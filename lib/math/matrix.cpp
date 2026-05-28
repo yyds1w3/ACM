@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 
 using i64 = long long;
+using i128 = __int128;
+// 如果TLE了把i128去掉
 struct Matrix {
     int n, m;
     i64 p;
@@ -9,7 +11,7 @@ struct Matrix {
     std::vector<i64>& operator[](int i) { return a[i]; }
     const std::vector<i64>& operator[](int i) const { return a[i]; }
     
-    Matrix(int n_, int m_, int p_) {
+    Matrix(int n_, int m_, i64 p_) {
         n = n_; m = m_; p = p_;
         a.resize(n, std::vector<i64>(m, 0));
     }
@@ -33,7 +35,7 @@ struct Matrix {
             for (int k = 0; k < lhs.m; ++k) {
                 if (lhs.a[i][k] == 0) continue;
                 for (int j = 0; j < rhs.m; ++j) {
-                    res.a[i][j] = (res.a[i][j] + lhs.a[i][k] * rhs.a[k][j]) % lhs.p;
+                    res.a[i][j] = (res.a[i][j] + (i128)lhs.a[i][k] * rhs.a[k][j]) % lhs.p;
                 }
             }
         }

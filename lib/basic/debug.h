@@ -14,71 +14,71 @@ inline std::ostream& operator<<(std::ostream& os, __int128 n) {
 }
 
 template <typename T>
-void dbg_out(const T& val) { std::cerr << val; }
+void dbg_out(const T& val) { std::cout << val; }
 
 template <typename A, typename B>
-void dbg_out(const std::pair<A, B>& p) { std::cerr << '(' << p.first << ", " << p.second << ')'; }
+void dbg_out(const std::pair<A, B>& p) { std::cout << '(' << p.first << ", " << p.second << ')'; }
 
 inline void dbg_out(const std::string& s) { 
-    std::cerr << '"' << s << '"'; 
+    std::cout << '"' << s << '"'; 
 }
 
 inline void dbg_out(const char* s) { 
-    std::cerr << '"' << s << '"'; 
+    std::cout << '"' << s << '"'; 
 }
 template <typename T>
 requires requires(T t) { t.begin(); t.end(); }
 void dbg_out(const T& v) {
-    std::cerr << '[';
+    std::cout << '[';
     bool first = true;
     for (const auto& x : v) {
-        if (!first) std::cerr << ",";
+        if (!first) std::cout << ",";
         first = false;
         dbg_out(x);
     }
-    std::cerr << ']';
-    std::cerr << "Total:" << v.size() << '\n';
+    std::cout << ']';
+    std::cout << "Total:" << v.size() << '\n';
 }
 template <typename T, std::size_t N>
 void dbg_out(const T (&a)[N]) {
-    std::cerr << '[';
+    std::cout << '[';
     for (std::size_t i = 0; i < N; ++i) {
-        if (i > 0) std::cerr << ",";
+        if (i > 0) std::cout << ",";
         dbg_out(a[i]);
     }
-    std::cerr << "]";
-    std::cerr << "Total:" << N << '\n';
+    std::cout << "]";
+    std::cout << "Total:" << N << '\n';
 }
 template <typename T>
 requires requires(T t) { t.begin(); t.end(); }
 void dbg_out_range(const T& v, int L, int R) {
-    std::cerr << '[';
+    std::cout << '[';
     bool first = true;
     auto it = std::next(v.begin(), L);
     for (int i = L; i < R && it != v.end(); ++i, ++it) {
-        if (!first) std::cerr << ",";
+        if (!first) std::cout << ",";
         first = false;
         dbg_out(*it);
     }
-    std::cerr << "]";
-    std::cerr << "Range: [" << L << ", " << R << "), Total: " << v.size() << '\n';
+    std::cout << "]";
+    std::cout << "Range: [" << L << ", " << R << "), Total: " << v.size() << '\n';
 }
 template <typename T, std::size_t N>
 void dbg_out_range(const T (&a)[N], int L, int R) {
-    std::cerr << '[';
+    std::cout << '[';
     for (int i = L; i < R && i < (int)N; ++i) {
-        if (i > L) std::cerr << ",";
+        if (i > L) std::cout << ",";
         dbg_out(a[i]);
     }
-    std::cerr << "]";
-    std::cerr << "Range: [" << L << ", " << R << "), Total: " << N << "\n";
+    std::cout << "]";
+    std::cout << "Range: [" << L << ", " << R << "), Total: " << N << "\n";
 }
 #define debug(x) do { \
-    std::cerr << _CLR_CYAN << "[" << #x << "]" << _CLR_RESET << std::endl; \
-    std::cerr << _CLR_GREEN; dbg_out(x); std::cerr << _CLR_RESET << std::endl; \
+    std::cout << _CLR_CYAN << "[" << #x << "]" << _CLR_RESET << std::endl; \
+    std::cout << _CLR_GREEN; dbg_out(x); std::cout << _CLR_RESET << std::endl; \
 } while (0);
 
 #define debug_range(x, L, R) do {\
-    std::cerr << _CLR_CYAN << "[" << #x << "]" << _CLR_RESET << std::endl; \
-    std::cerr << _CLR_GREEN; dbg_out_range(x, L, R); std::cerr << _CLR_RESET << std::endl; \
+    std::cout << _CLR_CYAN << "[" << #x << "]" << _CLR_RESET << std::endl; \
+    std::cout << _CLR_GREEN; dbg_out_range(x, L, R); std::cout << _CLR_RESET << std::endl; \
 } while (0);

@@ -1,44 +1,43 @@
+//Thu Apr 16 10:52:16 PM CST 2026
 #include <bits/stdc++.h>
-#include <functional>
-#include <vector>
-using namespace std;
-using ll = long long;
-using i128 = __int128;
 #define nl "\n"
-#define debug(x) cerr << x << endl
-struct LIS{
-    int strict(const vector<int> &a){
-        if (a.empty()) return 0;
-        vector<int> tails;
-        for (int v : a){
-            auto it = lower_bound(tails.begin(), tails.end(), v);
-            if (it == tails.end()) tails.push_back(v);
-            else *it = v;
-        }
-        return tails.size();
-    }
-    int non_decreasing(const vector<int> &a){
-        if (a.empty()) return 0;
-        vector<int> tails;
-        for (int v : a){
-            auto it = upper_bound(tails.begin(), tails.end(), v, greater<int>());
-            if (it == tails.end()) tails.push_back(v);
-            else *it = v;
-        }
-        return tails.size();
-    }
-};
+#ifdef LOCAL
+#include <debug.h>
+#else
+#define debug(...) 43
+#define debug_range(...) 43
+#endif
+using i64 = long long;
+using i128 = __int128;
+
+
 int main() {
-    cin.tie(nullptr)->sync_with_stdio(false);
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
     #ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
+    freopen("in.txt", "r", stdin);
+    freopen("sout.txt", "w", stdout);
     #endif
-    vector<int> a;
+    std::vector<int> a;
     int x;
-    while (cin >> x) {
+    while (std::cin >> x) {
         a.push_back(x);
     }
-    LIS lis;
-    cout << lis.non_decreasing(a) << nl;
-    cout << lis.strict(a) << nl;
+    int n = a.size();
+    std::vector<int> dp;
+    // >=  
+    for (int i = 0; i < n; ++i) {
+        auto it = std::upper_bound(dp.begin(), dp.end(), a[i], std::greater<int>());
+        if (it == dp.end()) dp.push_back(a[i]);
+        else *it = a[i];
+    }
+    std::cout << dp.size() << nl;
+    dp.clear();
+    // <
+    for (int i = 0; i < n; ++i) {
+        auto it = std::lower_bound(dp.begin(), dp.end(), a[i]);
+        if (it == dp.end()) dp.push_back(a[i]);
+        else *it = a[i];
+    }
+    std::cout << dp.size() << nl;
 }

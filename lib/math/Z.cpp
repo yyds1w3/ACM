@@ -21,7 +21,7 @@ struct Z {
     int x; // [0, P)
 
     Z(int x = 0) : x(norm(x)) {}
-    Z(i64 x = 0) : x(norm(x % P)) {}
+    Z(i64 x) : x(norm(x % P)) {}
 
     int val() const {
         return x;
@@ -58,7 +58,7 @@ struct Z {
         a = Z(v);
         return is;
     }
-    friend std::ostream &operator<<(std::ostream& os, Z& a) {
+    friend std::ostream &operator<<(std::ostream& os, const Z& a) {
         os << a.val();
         return os;
     }

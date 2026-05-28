@@ -9,7 +9,6 @@
 using i64 = long long;
 using i128 = __int128;
 
-
 int main() {
     std::ios::sync_with_stdio(false); 
     std::cin.tie(nullptr);

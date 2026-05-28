@@ -1,56 +1,45 @@
+//Mon Apr 27 06:53:02 PM CST 2026
 #include <bits/stdc++.h>
+#define nl "\n"
 #ifdef LOCAL
-#include "basic/debug.h"
+#include <debug.h>
 #else
-#define debug(...) 42
+#define debug(...) 43
+#define debug_range(...) 43
 #endif
-using namespace std;
-typedef long long ll;
-typedef unsigned long long ull;
-typedef unsigned int uint;
-ll p[64];
-void insert(ll x){
-    for (int i = 50; i >= 0; --i){
-        if ((x >> i) & 1){
-            if (!p[i]){
-                p[i] = x;
-                break;
-            }else{
-                 x ^= p[i];
+using i64 = long long;
+using i128 = __int128;
+
+
+int main() {
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
+    freopen("in.txt", "r", stdin);
+    freopen("sout.txt", "w", stdout);
+    #endif
+    int n;
+    std::cin >> n;
+    std::vector<i64> d(50);
+    for (int i = 0; i < n; ++i) {
+        i64 x;
+        std::cin >> x;
+        for (int j = 49; j >= 0; --j) {
+            if ((x >> j) & 1) {
+                if (d[j] == 0) {
+                    d[j] = x;
+                    break;
+                }else {
+                    x ^= d[j];
+                }
             }
         }
     }
-}
-ll query(){
-    ll ans = 0;
-    for (int i = 50; i >= 0; --i){
-        if ((ans ^ p[i]) > ans){
-            ans ^= p[i];
+    i64 ans = 0;
+    for (int i = 49; i >= 0; --i) {
+        if ((ans ^ d[i]) > ans) {
+            ans ^= d[i];
         }
     }
-    return ans;
-}
-void solve() {
-    int n;
-    cin >> n;
-    for (int i = 1; i <= n; ++i){
-        ll x;
-        cin >> x;
-        insert(x);
-    }
-    cout << query();
-}
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) {
-        solve();
-    }
-    return 0;
+    std::cout << ans << nl;
 }

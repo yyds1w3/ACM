@@ -1,74 +1,60 @@
+//Thu Apr 23 01:33:14 PM CST 2026
 #include <bits/stdc++.h>
-#ifdef LOCAL
-#include "basic/debug.h"
-#else
-#define debug(...) 42
-#endif
-using ll = long long;
-using lll = __int128;
-using namespace std;
 #define nl "\n"
-#define rep(i,s,e) for (ll i = s; i <= (e); ++i)
-#define per(i,e,s) for (ll i = e; i >= (s); --i) 
-const ll LINF = 1e18;
-const int INF = 0x3f3f3f3f;
-const int MOD = 1e9 + 7;
-const int MAXN = 1e4 + 5;
-struct Edge {
-    int to, w;
-};
-struct Node {
-    int u, cost, k;
-    bool operator<(const Node& other)const {return cost > other.cost;}
-};
-vector<Edge> adj[MAXN];
-int dist[MAXN][15];
-int n, m, k, s, t; 
-void dji() {
-    rep(i, 0, n-1) {
-        rep(j, 0, k) {
-            dist[i][j] = INF;
-        }
+#ifdef LOCAL
+#include <debug.h>
+#else
+#define debug(...) 43
+#define debug_range(...) 43
+#endif
+using i64 = long long;
+using i128 = __int128;
+const int INF = 1e9;
+struct Point {
+    int u, d, k;
+    bool operator<(const Point& other) const {
+        return d > other.d;
     }
-    dist[s][0] = 0;
-    priority_queue<Node> pq;
-    pq.push({s, 0, 0});
-    while (!pq.empty()) {
-        auto [u, d, j] = pq.top();
-        pq.pop();
-        if (d > dist[u][j]) continue;
-        for (auto [v, w] : adj[u]) {
-            if (dist[u][j] + w < dist[v][j]) {
-                dist[v][j] = dist[u][j] + w;
-                pq.push({v, dist[v][j], j});
-            }
-            if (j < k && dist[u][j] < dist[v][j+1]) {
-                dist[v][j+1] = dist[u][j];
-                pq.push({v, dist[v][j+1], j+1});
-            }
-        }
-    }
-}
-void solve() {
-    cin >> n >> m >> k >> s >> t;
-    rep(i, 1, m) {
-        int u, v, w; cin >> u >> v >> w;
+};
+int main() {
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
+    freopen("in.txt", "r", stdin);
+    freopen("sout.txt", "w", stdout);
+    #endif
+    int n, m, K, s, t;
+    std::cin >> n >> m >> K >> s >> t;
+    std::vector<std::vector<std::pair<int, int>>> adj(n);
+    for (int i = 0; i < m; ++i) {
+        int u, v, w;
+        std::cin >> u >> v >> w;
         adj[u].push_back({v, w});
         adj[v].push_back({u, w});
     }
-    dji();
-    int ans = INF;
-    rep(i, 0, k) ans = min(ans, dist[t][i]);
-    cout << ans << nl;
-}
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) solve();
+    std::vector<std::vector<int>> dist(n, std::vector<int>(K + 1, INF));
+    std::priority_queue<Point> pq;
+    dist[s][0] = 0;
+    pq.push({s, 0, 0});
+    while (!pq.empty()) {
+        auto [u, d, k] = pq.top();
+        pq.pop();
+        if (d > dist[u][k]) continue;
+        for (auto [v, w] : adj[u]) {
+            if (dist[u][k] + w < dist[v][k]) {
+                dist[v][k] = dist[u][k] + w;
+                pq.push({v, dist[v][k], k});
+            }
+            if (k == K) continue;
+            if (dist[u][k] < dist[v][k + 1]) {
+                dist[v][k + 1] = dist[u][k];
+                pq.push({v, dist[v][k + 1], k + 1});
+            }
+        }
+    }
+    int min_cost = INF;
+    for (int i = 0; i <= K; ++i) {
+        min_cost = std::min(min_cost, dist[t][i]);
+    }
+    std::cout << min_cost << nl;
 }

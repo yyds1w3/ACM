@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include "Z.cpp"
+// 只适用于n <= 1e6 差不多这个数量级
 struct Comb {
     int n;
     std::vector<Z> _fac;
@@ -41,4 +42,4 @@ struct Comb {
         if (n < m || m < 0) return 0;
         return fac(n) * invFac(m) * invFac(n - m);
     }
-};
+}comb;
