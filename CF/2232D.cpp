@@ -1,0 +1,59 @@
+//Tue Sep  1 08:18:59 PM CST 2026
+#include <bits/stdc++.h>
+#define nl "\n"
+#define debug(x) std::cout << #x << ": " << x << nl 
+#define debugv(v, sz) do{std::cout << #v << "[]:" << nl;\
+for (int i = 0; i < sz; ++i) std::cout << v[i] << " "; std::cout << nl;}while(0)
+#define debugvv(v, sz1, sz2) do{std::cout << #v << "[][]:" << nl;\
+for (int i = 0; i < sz1; ++i) {std::cout << i << ":";for (int j = 0; j < sz2; ++j) std::cout << v[i][j] << " "; std::cout<<nl;}}while(0)
+using i64 = long long;
+using i128 = __int128;
+struct Node {
+};
+std::ostream& operator<<(std::ostream& os, Node& rhs) {
+    return os << "[" << "," << "]";
+}
+
+void solve() {
+    int n;
+    std::cin >> n;
+    std::vector<int> a(n + 1);
+    std::vector<std::vector<int>> op;
+    bool ok = true;
+    for (int i = 1; i <= n; ++i) {
+        std::cin >> a[i];
+        if (a[i] >= i) ok = false;
+    }
+    if (!ok) {
+        std::cout << "NO" << nl;
+        return;
+    }
+    std::cout << "YES" << nl;
+    auto f = [&](auto self, int k, int s, int t) {
+        if (k <= 0) return;
+        int u = 6 - s - t;
+        if (a[k] == 0) {
+            self(self, k-1, s, u);
+            op.push_back({k, s, t});
+            self(self, k-1, u, t);
+        }else {
+            self(self, k-1-a[k], s, u);
+            op.push_back({k, s, t});
+            self(self, k-1-a[k], u, s);
+            self(self, k-1, s, t);
+        }
+    };
+    f(f, n, 1, 3);
+    std::cout << op.size() << nl;
+    for (auto v : op) {
+        std::cout << v[0] << " " << v[1] << " " << v[2] << nl;
+    }
+
+}
+int main() {
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    int t;
+    std::cin >> t;
+    while (t--) solve();
+}

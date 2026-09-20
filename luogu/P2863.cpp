@@ -1,66 +1,54 @@
+//Thu Aug 13 09:15:38 PM CST 2026
 #include <bits/stdc++.h>
-#include <vector>
-#ifdef LOCAL
-#include "basic/debug.h"
-#else
-#define debug(...) 42
-#endif
-using ll = long long;
-using lll = __int128;
-using namespace std;
 #define nl "\n"
-#define rep(i,s,e) for (ll i = s; i <= (e); ++i)
-#define per(i,e,s) for (ll i = e; i >= (s); --i) 
-const ll LINF = 1e18;
-const int INF = 0x3f3f3f3f;
-const int MOD = 1e9 + 7;
-const int MAXN = 2e5 + 5;
-vector<int> adj[MAXN];
-int dfn[MAXN], low[MAXN], stk[MAXN], top, timer;
-bool in_stk[MAXN];
-int ans;
-void tarjan(int u) {
-    dfn[u] = low[u] = ++timer;
+#define debug(x) std::cerr << #x << ": " << x << nl; 
+using i64 = long long;
+using i128 = __int128;
+// 有向图求SCC
+const int N = 1e4;
+int n, m;
+std::vector<std::vector<int>> adj(N);
+int tot = 0, top = -1, cnt = 0;
+std::vector<int> dfn(N), low(N), stk(N), id(N), scc(N + 1);
+void dfs(int u) {
+    dfn[u] = low[u] = ++tot;
     stk[++top] = u;
-    in_stk[u] = true;
     for (int v : adj[u]) {
         if (!dfn[v]) {
-            tarjan(v);
-            low[u] = min(low[u], low[v]);
-        }else if (in_stk[v]){
-            low[u] = min(low[u], dfn[v]);
+            dfs(v);
+            low[u] = std::min(low[u], low[v]);
+        }else if (!id[v]){
+            low[u] = std::min(low[u], dfn[v]);
         }
     }
-    if (dfn[u] == low[u]) {
-        int cnt = 0;
-        int v;
-        do {
-            v = stk[top--];
-            in_stk[v] = false;
-            cnt++;
-        }while (u != v);
-        if (cnt > 1) ans++;
+    if (low[u] == dfn[u]) {
+        cnt++;
+        while (top >= 0) {
+            int x = stk[top--];
+            id[x] = cnt;
+            scc[cnt]++;
+            if (x == u) break;
+        }
     }
-}
-void solve() {
-    int n, m; cin >> n >> m;
-    rep(i, 1, m) {
-        int u, v; cin >> u >> v;
-        adj[u].push_back(v);
-    }
-    rep(i, 1, n) {
-        if (!dfn[i]) tarjan(i);
-    }
-    cout << ans << nl;
-}
+};
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) solve();
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    std::cin >> n >> m;
+    for (int i = 0; i < m; ++i) {
+        int u, v;
+        std::cin >> u >> v;
+        u--, v--;
+        adj[u].push_back(v);
+    }
+    for (int i = 0; i < n; ++i) {
+        if (!dfn[i]) dfs(i);
+    }
+    int ans = 0;
+    for (int i = 1; i <= cnt; ++i) {
+        if (scc[i] > 1) ans++;
+    }
+    std::cout << ans << nl;
+
 }

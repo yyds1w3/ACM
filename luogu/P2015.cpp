@@ -1,15 +1,14 @@
+//Fri Aug  7 01:39:14 PM CST 2026
 #include <bits/stdc++.h>
-#include <vector>
+#define nl "\n"
 using i64 = long long;
 using i128 = __int128;
-#define nl "\n"
-
+#define debug(x) std::cerr << #x << ": " << x << nl; 
+int dp[100][101];
+int sz[100];
 int main() {
     std::ios::sync_with_stdio(false); 
     std::cin.tie(nullptr);
-    #ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-    #endif
     int n, q;
     std::cin >> n >> q;
     std::vector<std::vector<std::pair<int, int>>> adj(n);
@@ -20,25 +19,18 @@ int main() {
         adj[u].push_back({v, w});
         adj[v].push_back({u, w});
     }
-    std::vector dp(n, std::vector<int>(q + 1, -1));
-    std::vector<int> sz(n);
-    // 合并子树的后序遍历
-    auto dfs = [&] (auto self, int u, int fa) -> void{
-        dp[u][0] = 0;
-        for (auto [v, w] : adj[u]) {
-            if (v == fa) continue;
+
+    auto dfs = [&](auto self, int u, int fa) -> void {
+        for (auto [v, w] : adj[u]) if (v != fa) {
             self(self, v, u);
             sz[u] += sz[v] + 1;
-            
-            for (int i = std::min(q, sz[u]); i > 0; --i) { // 确保合并v子树的时候，dp[i-k-1]是未合并子树的最佳状态
-                for (int k = 0; k <= std::min(i - 1, sz[v]); ++k) {
-                    if (dp[u][i - k - 1] != -1 && dp[v][k] != -1) {
-                        dp[u][i] = std::max(dp[u][i], dp[v][k] + dp[u][i - k - 1] + w);
-                    }
+            for (int j = std::min(q, sz[u]); j >= 1; j--) {
+                for (int k = 0; k <= std::min(sz[v], j - 1); ++k) {
+                    dp[u][j] = std::max(dp[u][j], dp[u][j-k-1] + dp[v][k] + w);
                 }
             }
-        }   
+        }
     };
-    dfs(dfs, 0, -1);
+    dfs(dfs, 0, 0);
     std::cout << dp[0][q] << nl;
 }

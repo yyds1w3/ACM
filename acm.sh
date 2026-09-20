@@ -16,9 +16,6 @@ if [ $? != 0 ]; then
   tmux new-window -t $SESSION -n "Lib" -c "$LIB_DIR"
   tmux send-keys -t $SESSION:Lib "nvim ." Enter
 
-  tmux new-window -t $SESSION -n "claude" -c "$WORK_DIR"
-  tmux send-keys -t $SESSION:claude "claude" Enter
-  
   tmux select-window -t $SESSION:Code
   tmux select-pane -t $SESSION:Code.1
 fi

@@ -1,38 +1,29 @@
-// 2026-04-02 17:05
 #include <bits/stdc++.h>
-
 using i64 = long long;
-
-// 单点修改 + 区间查询
-// 假设原数组是a
-struct Fenwick {
-    int n;
-    std::vector<i64> treeA;
-    
-    Fenwick(int n_ = 0) : n(n_) {
-        treeA.assign(n + 1, 0);
+const int N = 2e5;
+int n;
+i64 treeA[N + 1];
+void initBIT(int n) {
+    std::fill(treeA, treeA + n, 0);
+}
+void add(int pos, i64 val) {
+    for (int i = pos + 1; i <= n; i += i&-i) {
+        treeA[i] += val;
     }
-    void add(int pos, int val) {
-        for (int i = pos + 1; i <= n; i += i & -i) { 
-            treeA[i] += val;
-        }
+}
+// [0, pos)
+i64 sum(int pos) {
+    i64 res = 0;
+    for (int i = pos; i >= 1; i -= i&-i) {
+        res += treeA[i];
     }
-    void update(int pos, int val) {
-        int x = val - query(pos, pos + 1);
-        for (int i = pos + 1; i <= n; i += i & -i) {
-            treeA[i] += x;
-        }
-    }
-    // sum(pos) == S[0, pos)
-    i64 sum(int pos) {
-        i64 res = 0;
-        for (int i = pos; i > 0; i -= i & -i) { // 这里不加1 因为我们写的开区间
-            res += treeA[i];
-        }
-        return res;
-    }
-    // query[l, r) = S[0, r) - S[0, l)
-    i64 query(int l, int r) {
-        return sum(r) - sum(l);
-    }
-};
+    return res;
+}
+// [l, r)
+i64 ask(int l, int r) {
+    return sum(r) - sum(l);
+}
+void upd(int pos, i64 val) {
+    i64 x = val - ask(pos, pos+1);
+    add(pos, x);
+}

@@ -1,0 +1,44 @@
+//Wed Jun 17 02:44:26 PM CST 2026
+#include <bits/stdc++.h>
+#define nl "\n"
+#ifdef LOCAL
+#include <debug.h>
+#else
+#define debug(...) 43
+#endif
+using i64 = long long;
+using i128 = __int128;
+void solve() {
+    int n;
+    std::cin >> n;
+    std::map<int, int> m;
+    bool f = false;
+    for (int i = 0; i < n; ++i) {
+        int x;
+        std::cin >> x;
+        m[x]++;
+        if (m[x] >= 4) f = true;
+    }
+    if (f) {
+        std::cout << "YES" << nl;
+        return;
+    }
+    for (auto it = std::next(m.begin()); it != std::prev(m.end()); ++it) {
+        auto pit = std::prev(it);
+        auto nit = std::next(it);
+        if (pit->first == it->first - 1 && nit->first == it->first + 1) {
+            if (pit->second >= 2 && nit->second >= 2 && it->second >= 1) {
+                std::cout << "YES" << nl;
+                return;
+            } 
+        }
+    }
+    std::cout << "NO" << nl;
+}
+int main() {
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    int t;
+    std::cin >> t;
+    while (t--) solve();
+}

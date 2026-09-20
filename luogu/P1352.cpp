@@ -1,38 +1,50 @@
+//Fri Aug  7 01:52:11 PM CST 2026
 #include <bits/stdc++.h>
-#include <vector>
-using namespace std;
-using ll = long long;
-using i128 = __int128;
 #define nl "\n"
-#define debug(x) cerr << x << endl
-const int MAXN = 6e3 + 5;
-int w[MAXN];
-vector<int> adj[MAXN];
-int dp[MAXN][2];
-int in[MAXN];
-void dfs(int u) {
-    dp[u][1] = w[u];
-    dp[u][0] = 0;
-    for (int v : adj[u]) {
-        dfs(v);
-        dp[u][0] += max(dp[v][0], dp[v][1]);
-        dp[u][1] += dp[v][0];
-    }
-}
+using i64 = long long;
+using i128 = __int128;
+#define debug(x) std::cerr << #x << ": " << x << nl; 
+int dp[6001][2];
 int main() {
-    cin.tie(nullptr)->sync_with_stdio(false);
-    #ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-    #endif
-    int n; cin >> n;
-    for (int i = 1; i <= n; ++i) cin >> w[i];
-    for (int i = 1, u, v; i <= n-1; ++i) {
-        cin >> u >> v;
-        adj[v].push_back(u);
-        in[u]++;
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    int n;
+    std::cin >> n;
+    std::vector<int> a(n), isRoot(n, true);
+    std::vector<std::vector<int>> adj(n);
+    for (int i = 0; i < n; ++i) {
+        std::cin >> a[i];
     }
-    int root = 1;
-    for (int i = 1; i <= n; ++i) if (in[i] == 0) {root = i; break;}
-    dfs(root);
-    cout << max(dp[root][0], dp[root][1]) << nl;
+    for (int i = 0; i < n - 1; ++i) {
+        int u, v;
+        std::cin >> u >> v;
+        u--, v--;
+        adj[v].push_back(u);
+        isRoot[u] = false;
+    }
+    int root = -1;
+    for (int i = 0; i < n; ++i) {
+        if (isRoot[i]) {
+            root = i;
+            break;
+        }
+    }
+
+    auto dfs = [&](auto self, int u) -> void {
+        if (adj[u].empty()) {
+            dp[u][1] = a[u];
+            return;
+        }
+        int f = 0;
+        for (int v : adj[u]) {
+            self(self, v);
+            dp[u][0] += std::max(dp[v][0], dp[v][1]);
+            f += dp[v][0];
+        }
+        dp[u][1] = std::max(dp[u][1], f + a[u]);
+    };
+
+    dfs(dfs, root);
+    std::cout << std::max(dp[root][0], dp[root][1]) << nl;
+
 }

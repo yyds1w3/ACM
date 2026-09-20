@@ -1,65 +1,34 @@
 #include <bits/stdc++.h>
 using i64 = long long;
-constexpr int P = 998244353;
+constexpr int MOD = 998244353;
 
-int norm(int x) {
-    while (x < 0) x += P;
-    while (x >= P) x -= P;
-    return x;
-}
-template<class T>
-T qpow(T a, i64 b) {
-    T res = 1;
-    while (b) {
-        if (b & 1) res *= a;
-        a *= a;
-        b >>= 1;
-    }
-    return res;
-}
 struct Z {
-    int x; // [0, P)
-
-    Z(int x = 0) : x(norm(x)) {}
-    Z(i64 x) : x(norm(x % P)) {}
-
-    int val() const {
-        return x;
+    i64 x;
+    Z() : x(0) {}
+    Z(int x_) : x(x_ % MOD) {if (x < 0) x += MOD;}
+    Z(i64 x_) : x(x_ % MOD) {if (x < 0) x += MOD;}
+    i64 val() {return x;}
+    Z& operator+=(Z b) {if ((x += b.x) >= MOD) x -= MOD; return *this;}
+    Z& operator-=(Z b) {if ((x -= b.x) < 0) x += MOD; return *this;}
+    Z& operator*=(Z b) {x = x * b.x % MOD; return *this;}
+    Z pow(i64 b) const {
+        Z res = 1;
+        Z a = *this;
+        while (b) {
+            if (b & 1) res *= a;
+            a *= a;
+            b >>= 1;
+        }
+        return res;
     }
-    Z operator-() const {
-        return Z(norm(P - x));
-    }
-    Z inv() const {
-        assert(x != 0);
-        return qpow(*this, P-2);
-    }
-    Z& operator+=(const Z& rhs) {
-        x = norm(x + rhs.x);
-        return *this;
-    }
-    Z& operator-=(const Z& rhs) {
-        x = norm(x - rhs.x);
-        return *this;
-    }
-    Z& operator*=(const Z& rhs) {
-        x = 1LL * x * rhs.x % P; // 相乘后数值大小超过了norm的范围
-        return *this;
-    }
-    Z& operator/=(const Z& rhs) {
-        return (*this) *= rhs.inv();
-    }
-    friend Z operator+(const Z& lhs, const Z& rhs) {Z res = lhs; res += rhs; return res;}
-    friend Z operator-(const Z& lhs, const Z& rhs) {Z res = lhs; res -= rhs; return res;}
-    friend Z operator*(const Z& lhs, const Z& rhs) {Z res = lhs; res *= rhs; return res;}
-    friend Z operator/(const Z& lhs, const Z& rhs) {Z res = lhs; res /= rhs; return res;}
-    friend std::istream &operator>>(std::istream& is, Z& a) {
-        i64 v;
-        is >> v;
-        a = Z(v);
-        return is;
-    }
-    friend std::ostream &operator<<(std::ostream& os, const Z& a) {
-        os << a.val();
-        return os;
-    }
+    Z inv() const {return pow(MOD - 2);}
+    Z& operator/=(Z b) {return *this *= b.inv();}
+    friend Z operator+(Z a, Z b) {return a += b;}
+    friend Z operator-(Z a, Z b) {return a -= b;}
+    friend Z operator*(Z a, Z b) {return a *= b;}
+    friend Z operator/(Z a, Z b) {return a /= b;}
+    friend bool operator==(Z a, Z b) {return a.val() == b.val();}
+    friend bool operator!=(Z a, Z b) {return !(a == b);}
 };
+std::ostream& operator<<(std::ostream& os, Z& rhs) {return os << rhs.val();}
+std::istream& operator>>(std::istream& is, Z& rhs) {i64 x; is >> x; rhs = x; return is;}

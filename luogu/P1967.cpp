@@ -1,123 +1,133 @@
+//Tue Aug 18 09:19:05 PM CST 2026
 #include <bits/stdc++.h>
 #define nl "\n"
-#ifdef LOCAL
-#include <debug.h>
-#else
-#define debug(...) 43
-#define debug_range(...) 43
-#endif
+#define debug(x) std::cerr << #x << ": " << x << nl; 
+#define debugv(v, sz) std::cerr << #v << ":" << nl;\
+for (int i = 0; i < sz; ++i) std::cerr << v[i] << " "; std::cerr << nl;
+#define debugvv(v, sz1, sz2) std::cerr << #v << ":" << nl;\
+for (int i = 0; i < sz1; ++i) {std::cerr << i << ": ";for (int j = 0; j < sz2; ++j) std::cerr << v[i][j] << " ";}
 using i64 = long long;
 using i128 = __int128;
+const int N = 1e4;
+int n, m;
+std::vector<int> f(N), sz(N);
+void init(int n) {
+    std::iota(f.begin(), f.begin() + n, 0);
+    sz.assign(n, 1);
+}
+int find(int x) {
+    if (f[x] == x) return x;
+    return f[x] = find(f[x]);
+}
+void merge(int x, int y) {
+    int rx = find(x);
+    int ry = find(y);
+    if (rx != ry) {
+        f[rx] = ry;
+        sz[ry] += sz[rx];
+    }
+}
+bool same(int x, int y) {
+    return find(x) == find(y);
+}
+int size(int x) {
+    return sz[find(x)];
+}
 struct Edge {
     int u, v, w;
     bool operator<(const Edge& other) const {
-        return w > other.w;
+        return w < other.w;
     }
 };
-struct DSU {
-    int n;
-    std::vector<int> fa;
-    DSU (int n_) : n(n_) {
-        fa.assign(n, 0);
-        std::iota(fa.begin(), fa.end(), 0);
+std::vector<std::vector<std::pair<int, int>>> adj(N);
+int fa[N][20];
+int mn[N][20];
+int dep[N];
+bool vis[N];
+void init2(int n) {
+    for (int i = 0; i < n; ++i) adj[i].clear();
+    std::fill(mn[0], mn[0] + n * 20, 1e9);
+    std::fill(dep, dep + n, 0);
+}
+void dfs(int u, int p) {
+    vis[u] = true;
+    if (p == -1) {
+        for (int i = 0; i < 20; ++i) fa[u][i] = u;
     }
-    int find(int x) {
-        if (fa[x] == x) {
-            return x;
+    for (auto [v, w] : adj[u]) if (v != p) {
+        dep[v] = dep[u] + 1;
+        fa[v][0] = u;
+        mn[v][0] = w;
+        for (int i = 1; i <= 19; ++i) {
+            fa[v][i] = fa[fa[v][i-1]][i-1];
+            mn[v][i] = std::min(mn[v][i-1], mn[fa[v][i-1]][i-1]);
         }
-        return fa[x] = find(fa[x]);
+        if (!vis[v]) dfs(v, u);
     }
-    bool merge(int x, int y) {
-        int rx = find(x);
-        int ry = find(y);
-        if (rx == ry) return false;
-        fa[rx] = ry;
-        return true;
+}
+int lca(int u, int v) {
+    if (dep[u] < dep[v]) {
+        std::swap(u, v);
     }
-    bool same(int x, int y) {
-        return find(x) == find(y);
+    for (int i = 19; i >= 0; --i) {
+        if (dep[fa[u][i]] >= dep[v]) u = fa[u][i];
     }
-};
-
+    if (u == v) return u;
+    for (int i = 19; i >= 0; --i) {
+        if (fa[u][i] != fa[v][i]) {
+            u = fa[u][i];
+            v = fa[v][i];
+        }
+    }
+    return fa[u][0];
+}
+int query(int u, int p) {
+    if (u == p) return 1e9;
+    int res = 1e9;
+    for (int i = 19; i >= 0; --i) {
+        if (dep[fa[u][i]] > dep[p]) {
+            res = std::min(res, mn[u][i]);
+            u = fa[u][i];
+        }
+    }
+    res = std::min(res, mn[u][0]);
+    return res;
+}
 int main() {
     std::ios::sync_with_stdio(false); 
     std::cin.tie(nullptr);
-    #ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-    #endif
-    int n, m;
     std::cin >> n >> m;
-    std::vector<Edge> a(m);
+    init(n);
+    init2(n);
+    std::vector<Edge> edges(m);
     for (int i = 0; i < m; ++i) {
-        std::cin >> a[i].u >> a[i].v >> a[i].w;
-        a[i].u--, a[i].v--;
+        int u, v, w;
+        std::cin >> u >> v >> w;
+        u--, v--;
+        edges[i] = {u, v, w};
     }
-    std::sort(a.begin(), a.end());
-    DSU dsu(n);
-    std::vector<std::vector<std::pair<int, int>>> adj(n);
-    for (int i = 0; i < m; ++i) {
-        auto [u, v, w] = a[i];
-        if (dsu.merge(u, v)) {
+    std::sort(edges.rbegin(), edges.rend());
+    for (auto [u, v, w] : edges) {
+        if (!same(u, v)) {
+            merge(u, v);
             adj[u].push_back({v, w});
             adj[v].push_back({u, w});
         }
     }
-    std::vector<int> depth(n + 1);
-    std::vector<std::vector<int>> f(n + 1, std::vector<int>(20, n)), minW(n + 1, std::vector<int>(20, 1e9));
-    
-    auto dfs = [&](auto self, int u, int fa, int w) -> void {
-        f[u][0] = fa;
-        minW[u][0] = w;
-        for (int i = 1; i < 20; ++i) {
-            f[u][i] = f[f[u][i-1]][i-1];
-            minW[u][i] = std::min(minW[u][i-1], minW[f[u][i-1]][i-1]);
-        }
-        for (auto [v, w] : adj[u]) {
-            if (v == fa) continue;
-            depth[v] = depth[u] + 1;
-            self(self, v, u, w);
-        }
-    };
     for (int i = 0; i < n; ++i) {
-        int root = dsu.find(i);
-        if (depth[root] == 0) {
-            depth[root] = 1;
-            dfs(dfs, root, n, 1e9);
-        }
+        if (!vis[i]) dfs(i, -1);
     }
-    auto query = [&](int u, int v) -> int {
-        int res = 1e9;
-        if (depth[u] < depth[v]) {
-            std::swap(u, v);
-        }
-        for (int k = 19; k >= 0; --k) {
-            if (depth[f[u][k]] >= depth[v]) {
-                res = std::min(res, minW[u][k]);
-                u = f[u][k];
-            }
-        }
-        if (u == v) {
-            return res;
-        }
-        for (int k = 19; k >= 0; --k) {
-            if (f[u][k] != f[v][k]) {
-                res = std::min({res, minW[u][k], minW[v][k]});
-                u = f[u][k];
-                v = f[v][k];
-            }
-        }
-        return std::min({res, minW[u][0], minW[v][0]});
-    };
     int q;
     std::cin >> q;
-    while(q--) {
+    while (q--) {
         int u, v;
         std::cin >> u >> v;
         u--, v--;
-        if (!dsu.same(u, v)) {
+        if (!same(u, v)) {
             std::cout << -1 << nl;
         }else {
-            std::cout << query(u, v) << nl;
+            int ff = lca(u, v);
+            std::cout << std::min(query(u, ff), query(v, ff)) << nl;
         }
     }
 }

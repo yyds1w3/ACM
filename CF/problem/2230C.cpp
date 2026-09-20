@@ -1,4 +1,4 @@
-//Tue May 19 12:12:47 PM CST 2026
+//Sun May 31 10:41:29 AM CST 2026
 #include <bits/stdc++.h>
 #define nl "\n"
 #ifdef LOCAL
@@ -9,7 +9,36 @@
 #endif
 using i64 = long long;
 using i128 = __int128;
-
+void solve() {
+    int n;
+    std::cin >> n;
+    i64 ans = 0;
+    i64 c1 = 0;
+    i64 cap = 0;
+    int kind = 0;
+    i64 tot = 0;
+    for (int i = 0; i < n; ++i) {
+        int x;
+        std::cin >> x;
+        if (x == 1) {
+            c1++;
+        }else {
+            kind++;
+            ans += x;
+            cap += x / 2 - 1;
+        }
+        tot += x;
+    }
+    if (c1 == n || tot < 3) {
+        std::cout << 0 << nl;
+    }else {
+        if (kind == 1) {
+            std::cout << std::min(cap + 1, c1) + ans << nl;
+        }else {
+            std::cout << std::min(cap, c1) + ans << nl;
+        }
+    }
+}
 int main() {
     std::ios::sync_with_stdio(false); 
     std::cin.tie(nullptr);
@@ -19,30 +48,5 @@ int main() {
     #endif
     int t;
     std::cin >> t;
-    while (t--) {
-        int n;
-        std::cin >> n;
-        i64 ans = 0;
-        int dan = 0, tuan = 0, cha = 0;
-        for (int i = 0; i < n; ++i) {
-            int x;
-            std::cin >> x;
-            if (x == 1) dan++;
-            else {
-                tuan++;
-                ans += x;
-                cha += x / 2 - 1;
-            }
-        }
-        if (tuan == 1) {
-            ans += std::min(cha + 1, dan);
-        }else {
-            ans += std::min(cha, dan);
-        }
-        if (ans < 3) {
-            std::cout << 0 << nl;
-        }else {
-            std::cout << ans << nl;
-        }
-    }
+    while (t--) solve();
 }

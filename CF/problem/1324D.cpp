@@ -1,31 +1,49 @@
+//Fri May 29 06:54:47 PM CST 2026
 #include <bits/stdc++.h>
-using namespace std;
-
+#define nl "\n"
+#ifdef LOCAL
+#include <debug.h>
+#else
+#define debug(...) 43
+#define debug_range(...) 43
+#endif
+using i64 = long long;
+using i128 = __int128;
 void solve() {
     int n;
-    cin >> n;
-    vector<int> a(n), b(n), c(n);
-    for(int i=0; i<n; i++) cin >> a[i];
-    for(int i=0; i<n; i++) cin >> b[i];
-    for(int i=0; i<n; i++) c[i] = a[i] - b[i];
-    sort(c.begin(), c.end());
-    long long ans = 0;
-    int L = 0;
-    int R = n - 1;
-    while (L < R) {
-        if (c[L] + c[R] > 0) {
-            ans += (R - L);
-            R--;
-        } else {
-            L++;
+    std::cin >> n;
+    std::vector<int> a(n), b(n);
+    std::vector<int> c(n);
+    for (int i = 0; i < n; ++i) {
+        std::cin >> a[i];
+    }
+    for (int i = 0; i < n; ++i) {
+        std::cin >> b[i];
+    }
+    for (int i = 0; i < n; ++i) {
+        c[i] = a[i] - b[i];
+    }
+    std::sort(c.begin(), c.end());
+    debug(c);
+    i64 ans = 0;
+    for (int i = 0; i < n; ++i) {
+        ans += n - (std::upper_bound(c.begin(), c.end(), -c[i]) - c.begin());
+        if (c[i] > 0) {
+            ans--;
         }
     }
-    cout << ans << endl;
+    std::cout << ans / 2 << nl;
 }
-
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(0);
-    solve();
-    return 0;
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
+    freopen("in.txt", "r", stdin);
+    freopen("sout.txt", "w", stdout);
+    #endif
+    int t;
+    t = 1;
+    while (t--) {
+        solve();
+    }
 }

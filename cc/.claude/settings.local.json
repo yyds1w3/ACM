@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(glow *)",
+      "Bash(/tmp/2222c)"
+    ]
+  },
+  "outputStyle": "Learning",
+  "prefersReducedMotion": true
+}

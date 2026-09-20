@@ -1,48 +1,54 @@
+//Tue Aug  4 04:12:19 PM CST 2026
 #include <bits/stdc++.h>
-#include <vector>
-using i64 = long long;
-using i128 = __int128;
 #define nl "\n"
+using i64 = long long;
+#define debug(x) std::cerr << #x << ": " << x << nl; 
+int dp[2][1<<10][1<<10];
 int main() {
     std::ios::sync_with_stdio(false); 
     std::cin.tie(nullptr);
-    #ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-    #endif
     int n, m;
     std::cin >> n >> m;
-    std::vector<int> mp(n);
-    for (int i = 0; i < n; ++i) {
+
+    std::vector<int> mp(n + 1);
+    for (int i = 1; i <= n; ++i) {
         std::string s;
         std::cin >> s;
         for (int j = 0; j < m; ++j) {
-            if (s[j] == 'H') {
-                mp[i] |= (1 << j);
-            }
+            if (s[j] == 'H') mp[i] |= (1 << j);
         }
     }
     std::vector<int> valid;
-    for (int s = 0, ms = (1 << m); s < ms; ++s) {
-        if ((s & (s << 1)) || (s & (s << 2))) continue;
-        valid.push_back(s);
+    for (int i = 0; i < (1 << m); ++i) {
+        if (!((i & (i << 1)) || (i & (i << 2)))) {
+            valid.push_back(i);
+        }
     }
-    int sz = valid.size();
-    std::vector memo(n, std::vector(sz, std::vector<int>(sz, -1)));
-    auto dfs = [&](auto self, int row, int pidx, int ppidx) -> i64 {
-        if (row == n) return 0;
-        if (memo[row][pidx][ppidx] != -1) {
-            return memo[row][pidx][ppidx];
+    
+    memset(dp, -1, sizeof(dp));
+    dp[0][0][0] = 0;
+    int val = 1;
+    for (int i = 1; i <= n; ++i, val ^= 1) {
+        memset(dp[val], -1, sizeof(dp[val]));
+        for (int j : valid) { if (mp[i] & j) continue;
+            for (int k : valid) { if (mp[i-1] & k) continue;
+                if (j & k) continue;
+                for (int kk : valid) {
+                    if (j & kk) continue;
+                    if (k & kk) continue;
+                    if (dp[val^1][k][kk] == -1) continue;
+                    dp[val][j][k] = std::max(dp[val][j][k], dp[val^1][k][kk] + __builtin_popcount(j));
+                }
+            }
         }
-        i64 res = 0;
-        int ps = valid[pidx];
-        int pps = valid[ppidx];
-        for (int i  = 0, sz = valid.size(); i < sz; ++i) {
-            int s = valid[i];
-            if ((s & ps) || (s & pps) || (s & mp[row])) continue;
-            int cnt = __builtin_popcount(s);
-            res = std::max(res, cnt + self(self, row + 1, i, pidx));
+    }
+
+    int ans = -1;
+    for (int j : valid) {
+        for (int k : valid) {
+            ans = std::max(ans, dp[val^1][j][k]);
         }
-        return memo[row][pidx][ppidx] = res;
-    };
-    std::cout << dfs(dfs, 0, 0, 0) << nl;
+    }
+    if (ans == -1) std::cout << 0 << nl;
+    else std::cout << ans << nl;
 }

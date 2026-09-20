@@ -1,9 +1,9 @@
 #include <bits/stdc++.h>
 
-constexpr int N = 1e6 + 10; // 最多的字母个数
+constexpr int N = 1e6 + 10;
 
-int trie[N][26]; // trie[i][0] 表示第i个节点通过'a'去的下一个节点编号 描述了节点之间的路径
-int tot; // 分配的总节点
+int trie[N][26];
+int tot;
 int pass[N], end[N];
 void init() {
     tot = 0;
@@ -15,42 +15,42 @@ int newNode() {
     return tot;
 }
 void insert(std::string& s) {
-    int p = 0;
+    int cur = 0;
     int l = s.size();
     for (int i = 0; i < l; ++i) {
         int x = s[i] - 'a';
-        if (trie[p][x] == 0) {
-            trie[p][x] = newNode();
+        if (trie[cur][x] == 0) {
+            trie[cur][x] = newNode();
         }
-        p = trie[p][x];
-        pass[p]++;
+        cur = trie[cur][x];
+        pass[cur]++;
     }
-    end[p]++;
+    end[cur]++;
 }
 // 以S为前缀的数量
 int query(std::string& s) {
-    int p = 0;
+    int cur = 0;
     int l = s.size();
     for (int i = 0; i < l; ++i) {
         int x = s[i] - 'a';
-        if (trie[p][x] == 0) {
+        if (trie[cur][x] == 0) {
             return 0;
         }
-        p = trie[p][x];
+        cur = trie[cur][x];
     }
-    return pass[p];
+    return pass[cur];
 }
 // 完整S的数量
 int countWord(std::string& s) {
-    int p = 0;
+    int cur = 0;
     int l = s.size();
     for (int i = 0; i < l; ++i) {
         int x = s[i] - 'a';
-        if (trie[p][x] == 0) {
+        if (trie[cur][x] == 0) {
             return 0;
         }
-        p = trie[p][x];
+        cur = trie[cur][x];
     }
-    return end[p];
+    return end[cur];
 }
 

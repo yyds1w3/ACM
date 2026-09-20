@@ -1,59 +1,105 @@
+//Mon Aug 17 08:33:30 PM CST 2027
 #include <bits/stdc++.h>
-#ifdef LOCAL
-#include "basic/debug.h"
-#else
-#define debug(...) 42
-#endif
-using ll = long long;
-using ull = unsigned long long;
-using uint = unsigned int;
-using namespace std;
 #define nl "\n"
-#define rep(i,s,e) for (ll i = s; i <= (ll)e; ++i)
-#define per(i,e,s) for (ll i = e; i >= (ll)s; --i) 
-const ll LINF = 1e18;
-const int INF = 0x3f3f3f3f;
-const int MOD = 1e9 + 7;
-const int MAXN = 2e5 + 5;
-int w[MAXN], v[MAXN];
-ll cnt[MAXN], vs[MAXN];
-int l[MAXN], r[MAXN];
-ll n, m, s;
-ll mn = LINF;
-ll check(int x) {
-    rep(i, 1, n) {
-        cnt[i] = cnt[i-1] + (w[i] >= x);
-        vs[i] = vs[i-1] + (w[i] >= x) * v[i];
-    }
-    ll ans = 0;
-    rep(i, 1, m) {
-        ans += (cnt[r[i]] - cnt[l[i]-1]) * (vs[r[i]] - vs[l[i]-1]);
-    }
-    return ans;
+#define debug(x) std::cerr << #x << ": " << x << nl; 
+using i64 = long long;
+using i128 = __int128;
+const int N = 128;
+std::vector<int> f(N), sz(N);
+void init(int n) {
+    std::iota(f.begin(), f.begin() + n, 0);
+    sz.assign(n, 1);
 }
-void solve() {
-    cin >> n >> m >> s;
-    rep(i, 1, n) cin >> w[i] >> v[i];
-    rep(i, 1, m) cin >> l[i] >> r[i];
-    int wl = 0, wr = 1000000;
-    while (wl < wr) {
-        int mid = (wl + wr) >> 1;
-        ll Y = check(mid);
-        if (abs(Y - s) < mn) mn = abs(Y - s);
-        if (Y > s) {
-            wl = mid+1;
-        }else wr = mid;
-    }
-    cout << min(mn, abs(check(wl) - s));
+int find(int x) {
+    if (f[x] == x) return x;
+    return f[x] = find(f[x]);
 }
-
+void merge(int x, int y) {
+    int rx = find(x);
+    int ry = find(y);
+    if (rx != ry) {
+        f[rx] = ry;
+        sz[ry] += sz[rx];
+    }
+}
+bool same(int x, int y) {
+    return find(x) == find(y);
+}
+int size(int x) {
+    return sz[find(x)];
+}
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-#ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-#endif
-    int tt = 1;
-    // cin >> tt;
-    while (tt--) solve();
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    int n;
+    std::cin >> n;
+    std::vector<std::vector<std::string>> g(N);
+    std::vector<int> in(N), out(N);
+    init(N);
+    for (int i = 0; i < n; ++i) {
+        std::string s;
+        std::cin >> s;
+        int u = s[0];
+        int v = s.back();
+        g[u].push_back(s);
+        out[u]++;
+        in[v]++;
+        merge(u, v);
+    }
+    int root = -1;
+    int tot = 0;
+    for (int i = 0; i < N; ++i) {
+        if (in[i] > 0 || out[i] > 0) {
+            tot++;
+            root = i;
+        }
+    }
+    if (size(root) != tot) {
+        std::cout << "***" << nl;
+        return 0;
+    }
+    int s = -1, t = -1;
+    bool ok = true;
+    for (int i = 0; i < N; ++i) {
+        if (out[i] == in[i] + 1) {
+            if (s == -1) s = i;
+            else ok = false;
+        }else if (out[i] == in[i] - 1) {
+            if (t == -1) t = i;
+            else ok = false;
+        }else if (out[i] != in[i]) {
+            ok = false;
+        }
+    }
+    if (!ok || (s == -1 && t != -1) || (s != -1 && t == -1)) {
+        std::cout << "***" << nl;
+        return 0;
+    }
+    if (s == -1) {
+        for (int i = 0; i < N; ++i) {
+            if (out[i] > 0) {
+                s = i;
+                break;
+            }
+        }
+    }
+    for (int i = 0; i < N; ++i) {
+        std::sort(g[i].rbegin(), g[i].rend());
+    }
+    std::vector<std::string> ans;
+    auto dfs = [&](auto self, int u) -> void {
+        while (!g[u].empty()) {
+            std::string tmp = g[u].back();
+            int v = tmp.back();
+            g[u].pop_back();
+            self(self, v);
+            ans.push_back(tmp);
+        }
+    };
+    dfs(dfs, s);
+    std::reverse(ans.begin(), ans.end());
+    for (int i = 0; i < (int)ans.size(); ++i) {
+        std::cout << ans[i] << (i < (int)ans.size() - 1 ? "." : "");
+    }
+    std::cout << nl;
 }

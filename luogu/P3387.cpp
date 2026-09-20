@@ -1,96 +1,76 @@
+//Thu Aug 13 07:56:59 PM CST 2026
 #include <bits/stdc++.h>
-using namespace std;
-
-const int N = 1e5 + 5; 
-vector<int> adj[N];
-vector<int> dag_adj[N];
-int dfn[N], low[N], w[N], timestamp;
-stack<int> stk;
-bool in_stack[N];
-int scc_count;
-int scc_id[N];
-int scc_size[N];
-int scc_weight[N];
-int memo[N];
-void tarjan(int u){
-    dfn[u] = low[u] = ++timestamp;   
-    stk.push(u);
-    in_stack[u] = true; 
-    for (int v : adj[u]){
-        if (!dfn[v]){
-            tarjan(v);
-            low[u] = min(low[u], low[v]);
-        } else if(in_stack[v]){
-            low[u] = min(low[u], dfn[v]);
+#define nl "\n"
+#define debug(x) std::cerr << #x << ": " << x << nl; 
+#define debugv(v) {std::cerr << #v << ": "; for (int i = 0; i <= cnt; ++i) std::cerr << v[i] << " "; std::cout << nl;}
+using i64 = long long;
+using i128 = __int128;
+const int N = 1e4;
+int n, m;
+std::vector<std::vector<int>> adj(N), adj2(N + 1);
+int tot = 0, top = -1, cnt = 0;
+std::vector<int> a(N);
+std::vector<int> dfn(N), low(N), stk(N), id(N);
+std::vector<int> scc(N + 1);
+std::vector<int> dp(N + 1, -1);
+void dfs(int u) {
+    dfn[u] = low[u] = ++tot;
+    stk[++top] = u;
+    for (int v : adj[u]) {
+        if (!dfn[v]) {
+            dfs(v);
+            low[u] = std::min(low[u], low[v]);
+        }else if (!id[v]){
+            low[u] = std::min(low[u], dfn[v]);
         }
     }
-    if (dfn[u] == low[u]){
-        scc_count++; 
-        int y;
-        do {
-            y = stk.top(); 
-            stk.pop();
-            in_stack[y] = false;
-            scc_id[y] = scc_count;
-            scc_size[scc_count]++;
-            scc_weight[scc_count] += w[y]; 
-        } while(y != u);
+    if (low[u] == dfn[u]) {
+        cnt++;
+        while (top >= 0) {
+            int x = stk[top--];
+            id[x] = cnt;
+            scc[cnt] += a[x];
+            if (x == u) break;
+        }
+    }
+};
+void dfs2(int u){
+    if (dp[u] != -1) return;
+    dp[u] = scc[u];
+    for (int v : adj2[u]) {
+        dfs2(v);
+        dp[u] = std::max(dp[u], scc[u] + dp[v]);
     }
 }
-
-void build_dag(int n){
-    for (int u = 1; u <= n; ++u){
-        for (int v : adj[u]){ 
-            int x = scc_id[u];
-            int y = scc_id[v];
-            if (x != y){
-                dag_adj[x].push_back(y);
+int main() {
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    std::cin >> n >> m;
+    for (int i = 0; i < n; ++i) {
+        std::cin >> a[i];
+    }
+    for (int i = 0; i < m; ++i) {
+        int u, v;
+        std::cin >> u >> v;
+        u--, v--;
+        adj[u].push_back(v);
+    }
+    for (int i = 0; i < n; ++i) {
+        if (!dfn[i]) dfs(i);
+    }
+    for (int i = 0; i < n; ++i) {
+        for (int v : adj[i]) {
+            if (id[i] != id[v]) {
+                adj2[id[i]].push_back(id[v]);
             }
         }
     }
-    for (int i = 1; i <= scc_count; i++) {
-        sort(dag_adj[i].begin(), dag_adj[i].end());
-        dag_adj[i].erase(unique(dag_adj[i].begin(), dag_adj[i].end()), dag_adj[i].end());
-    }
-}
-
-int dp(int u){
-    if (memo[u]) return memo[u];
-    
-    int max_future = 0;
-    for (int v : dag_adj[u]){
-        max_future = max(max_future, dp(v));
-    }
-    return memo[u] = scc_weight[u] + max_future;
-}
-
-int main(){
-    ios::sync_with_stdio(false);
-    cin.tie(0);
-
-    int n, m;
-    cin >> n >> m;
-    for(int i = 1; i <= n; i++){
-        cin >> w[i];
-    }
-    for (int i = 0; i < m; i++) {
-        int u, v;
-        cin >> u >> v;
-        adj[u].push_back(v);
-    }
-    for (int i = 1; i <= n; i++) {
-        if (!dfn[i]) { // 新的scc
-            tarjan(i);
+    int ans = 0;
+    for (int i = 1; i <= cnt; ++i) {
+        if (dp[i] == -1) {
+            dfs2(i);
+            ans = std::max(ans, dp[i]);
         }
     }
-    
-    build_dag(n);
-    int ans = 0;
-    for(int i = 1; i <= scc_count; i++){
-        ans = max(ans, dp(i));
-    }
-    
-    cout << ans << endl;
-    
-    return 0;
+    std::cout << ans << nl;
 }

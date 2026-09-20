@@ -1,20 +1,18 @@
+//Sun Aug  9 03:06:35 PM CST 2026
 #include <bits/stdc++.h>
-#include <vector>
+#define nl "\n"
 using i64 = long long;
 using i128 = __int128;
-#define nl "\n"
-struct Edge {
-    int to, w;
-};
+#define debug(x) std::cerr << #x << ": " << x << nl; 
+i64 dp[2000][2001];
+int sz[2000];
+const i64 INF = 2e18;
 int main() {
     std::ios::sync_with_stdio(false); 
     std::cin.tie(nullptr);
-    #ifdef LOCAL
-    if (fopen("in.txt", "r")) freopen("in.txt", "r", stdin);
-    #endif
     int n, k;
     std::cin >> n >> k;
-    std::vector adj(n, std::vector<Edge>());
+    std::vector<std::vector<std::pair<int, int>>> adj(n);
     for (int i = 0; i < n - 1; ++i) {
         int u, v, w;
         std::cin >> u >> v >> w;
@@ -22,31 +20,23 @@ int main() {
         adj[u].push_back({v, w});
         adj[v].push_back({u, w});
     }
-    std::vector dp(n, std::vector<i64>(k + 1, -1));
-    std::vector<int> sz(n, 0);
-    auto dfs = [&] (auto self, int u, int fa) -> void {
+
+    auto dfs = [&](auto self, int u, int fa) -> void {
+        for (int i = 2; i <= k; ++i) dp[u][i] = -INF;
+        dp[u][0] = dp[u][1] = 0;
         sz[u] = 1;
-        dp[u][0] = 0;
-        if (k >= 1) dp[u][1] = 0;
-        for (auto [v, w] : adj[u]) {
-            if (v == fa) continue;
+        for (auto [v, w] : adj[u]) if (v != fa) {
             self(self, v, u);
-            int limit = std::min(k, sz[u] + sz[v]);
-            std::vector<i64> nxt(limit + 1, -1);
-            for (int i = 0; i <= std::min(k, sz[u]); ++i) { // u占的黑点
-                if (dp[u][i] == -1) continue;
-                for (int j = 0; j <= std::min(k - i, sz[v]); ++j) { // v占的黑点
-                    if (dp[v][j] == -1) continue;
-                    i64 cost = 1LL * w * (1LL * j * (k - j) + 1LL * (sz[v] - j) * (n - k - sz[v] + j));
-                    nxt[i + j] = std::max(nxt[i + j], dp[u][i] + dp[v][j] + cost); 
+            for (int i = std::min(k, sz[u] + sz[v]); i >= 0; --i) {
+                for (int j = std::max(0, i - sz[u]); j <= std::min(sz[v], i); ++j) { // i - j <= sz[u]
+                    int h1 = k - j, h2 = j;
+                    int b1 = n - sz[v] - h1, b2 = sz[v] - h2;
+                    dp[u][i] = std::max(dp[u][i], dp[u][i - j] + dp[v][j] + w * (1LL * h1 * h2 + b1 * b2));
                 }
-            }
+            } 
             sz[u] += sz[v];
-            for (int i = 0; i <= limit; ++i) {
-                dp[u][i] = nxt[i];
-            }
-        } 
+        }
     };
-    dfs(dfs, 0, -1);
+    dfs(dfs, 0, 0);
     std::cout << dp[0][k] << nl;
 }

@@ -1,26 +1,36 @@
-//Sun Apr 26 10:20:44 PM CST 2026
+//Thu Aug 13 08:24:28 PM CST 2026
 #include <bits/stdc++.h>
 #define nl "\n"
-#ifdef LOCAL
-#include <debug.h>
-#else
-#define debug(...) 43
-#define debug_range(...) 43
-#endif
+#define debug(x) std::cerr << #x << ": " << x << nl; 
 using i64 = long long;
 using i128 = __int128;
-
-
+const int N = 2e4;
+int n, m;
+int tot;
+int root;
+std::vector<bool> cut(N);
+std::vector<int> dfn(N), low(N);
+std::vector<std::vector<int>> adj(N);
+void dfs(int u, int fa) {
+    if (fa == -1) root = u;
+    dfn[u] = low[u] = ++tot;
+    int child = 0;
+    for (int v : adj[u]) if (v != fa) {
+        if (!dfn[v]) {
+            child++;
+            dfs(v, u);
+            low[u] = std::min(low[u], low[v]);
+            if (u != root && low[v] >= dfn[u]) cut[u] = true;
+        }else {
+            low[u] = std::min(low[u], dfn[v]);
+        }
+    }
+    if (u == root && child >= 2) cut[u] = true;
+}
 int main() {
     std::ios::sync_with_stdio(false); 
     std::cin.tie(nullptr);
-    #ifdef LOCAL
-    freopen("in.txt", "r", stdin);
-    freopen("sout.txt", "w", stdout);
-    #endif
-    int n, m;
     std::cin >> n >> m;
-    std::vector<std::vector<int>> adj(n);
     for (int i = 0; i < m; ++i) {
         int u, v;
         std::cin >> u >> v;
@@ -28,44 +38,13 @@ int main() {
         adj[u].push_back(v);
         adj[v].push_back(u);
     }
-    std::vector<int> dfn(n), low(n);
-    std::vector<bool> isCut(n);
-    int timer = 0;
-    auto dfs = [&](auto self, int u, int fa, int root) -> void {
-        dfn[u] = low[u] = ++timer;
-        int child = 0;
-        for (int v : adj[u]) {
-            if (v == fa) continue;
-            if (!dfn[v]) {
-                child++;
-                self(self, v, u, root);
-                low[u] = std::min(low[u], low[v]);
-                if (u != root && low[v] >= dfn[u]) {
-                    isCut[u] = true;
-                }
-            }else {
-                low[u] = std::min(low[u], dfn[v]);
-            }
-        }
-        if (u == root && child >= 2) {
-            isCut[u] = true; 
-        }
-    };
     for (int i = 0; i < n; ++i) {
-        if (!dfn[i]) {
-            dfs(dfs, i, i, i);
-        }
+        if (!dfn[i]) dfs(i, -1);
     }
-    int tot = 0;
+    int ans = std::accumulate(cut.begin(), cut.end(), 0);
+    std::cout << ans << nl;
     for (int i = 0; i < n; ++i) {
-        if (isCut[i]) {
-            tot++;
-        }
+        if (cut[i]) std::cout << i + 1 << " ";
     }
-    std::cout << tot << nl;
-    for (int i = 0; i < n; ++i) {
-        if (isCut[i]) {
-            std::cout << i + 1 << " ";
-        }
-    }
+    std::cout << nl;
 }

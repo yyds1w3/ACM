@@ -1,36 +1,48 @@
+//Fri May 29 07:09:47 PM CST 2026
 #include <bits/stdc++.h>
-#define IOS ios::sync_with_stdio(false); cin.tie(0); cout.tie(0);
-using namespace std;
-typedef long long ll;
-const int N = 2e5 + 1;
-ll a[N];
-int n, k;
-bool check(ll x){
-    ll cost = 0;
-    for (int i = n / 2 + 1; i <= n; ++i){
-        cost += max(0LL, x - a[i]);
-        if (cost > k) return false;
+#define nl "\n"
+#ifdef LOCAL
+#include <debug.h>
+#else
+#define debug(...) 43
+#define debug_range(...) 43
+#endif
+using i64 = long long;
+using i128 = __int128;
+void solve() {
+    i64 n, k;
+    std::cin >> n >> k;
+    std::vector<int> a(n);
+    for (int i = 0; i < n; ++i) {
+        std::cin >> a[i];
     }
-    return cost <= k;
-}
-ll bsearch(){
-    ll l = 0, r = 2e9;
-    while (l < r){
-        ll mid = (l + r + 1) >> 1;
-        if (check(mid)){
-            l = mid;
-        }else{
-            r = mid - 1;
+    std::sort(a.begin(), a.end());
+    int idx = n / 2;
+    i64 add = 0;
+    for (int i = n / 2 + 1; i < n; ++i) {
+        i64 cnt = (i - n / 2);
+        i64 mx = cnt * (a[i] - a[i - 1]);
+        if (k >= mx) {
+            k -= mx;
+            idx = i;
+        }else {
+            break;
         }
     }
-    return l;
+    i64 cnt = (idx - n / 2 + 1);
+    add += k / cnt;
+    std::cout << a[idx] + add << nl;
 }
-int main(){
-    IOS;
-    cin >> n >> k;
-    for (int i = 1; i <= n; ++i){
-        cin >> a[i];
+int main() {
+    std::ios::sync_with_stdio(false); 
+    std::cin.tie(nullptr);
+    #ifdef LOCAL
+    freopen("in.txt", "r", stdin);
+    freopen("sout.txt", "w", stdout);
+    #endif
+    int t;
+    t = 1;
+    while (t--) {
+        solve();
     }
-    sort(a+1, a+1+n);
-    cout << bsearch();
 }

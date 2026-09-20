@@ -1,4 +1,4 @@
-//Sun May 24 03:59:17 PM CST 2026
+//Thu May 28 04:13:53 PM CST 2026
 #include <bits/stdc++.h>
 #define nl "\n"
 #ifdef LOCAL
@@ -9,6 +9,7 @@
 #endif
 using i64 = long long;
 using i128 = __int128;
+
 int main() {
     std::ios::sync_with_stdio(false); 
     std::cin.tie(nullptr);
@@ -24,28 +25,25 @@ int main() {
         std::vector<int> a(m);
         for (int i = 0; i < m; ++i) {
             std::cin >> a[i];
+            a[i] = std::min(a[i], n - 1); // i最多能涂的木板
         }
-        std::vector<int> L(m), R(m);
-        for (int i = 0; i < m; ++i) {
-            L[i] = std::max(1 , n - a[i]);
-            R[i] = std::min(a[i], n - 1);
-        }
-        std::vector<int> SL = L;
-        std::sort(SL.begin(), SL.end());
-        std::vector<i64> pi(m);
-        for (int i = 0; i < m; ++i) {
-            pi[i] = (i > 0 ? pi[i - 1] : 0) + SL[i];
-        }
+        std::sort(a.begin(), a.end());
+
         i64 ans = 0;
-        for (int i = 0; i < m; ++i) {
-            int cnt = std::upper_bound(SL.begin(), SL.end(), R[i]) - SL.begin();
-            if (cnt > 0)  {
-                ans += (1 + R[i]) * cnt - pi[cnt-1];
-            }
-            if (R[i] >= L[i]) {
-                ans -= R[i] - L[i] + 1;
-            }
+        std::vector<i64> suf(m + 1);
+        for (int i = m - 1; i >= 0; --i) {
+            suf[i] = suf[i + 1] + a[i];
         }
-        std::cout << ans << nl;
+        for (int i = 0, j = m - 1; i < m; ++i) {
+            j = std::max(i, j);
+            while (j > i && a[i] + a[j] >= n) {
+                j--;
+            }
+            //  n - a[j] <= k <= a[i]
+            //  cnt = a[i] + a[j] - n + 1;
+            ans += 1LL * (a[i] - n + 1) * (m - 1 - j);
+            ans += suf[j + 1];
+        }
+        std::cout << 2 * ans << nl;
     }
 }
